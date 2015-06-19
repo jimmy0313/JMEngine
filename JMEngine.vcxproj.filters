@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{29ddf4d2-da21-48ec-8544-cb1dae32c508}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{66609535-18fb-4b06-8329-03b40c3592ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\net">
+      <UniqueIdentifier>{88a526bd-4132-4012-adc8-17ebb223be6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\util">
+      <UniqueIdentifier>{b16c1988-d3e4-4ce7-a781-aaee54b0d385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\net">
+      <UniqueIdentifier>{3584bef2-d53d-4bde-8a6c-067867169316}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\util">
+      <UniqueIdentifier>{1b2aaf30-ea94-4509-921d-a4c9ea3075f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\log">
+      <UniqueIdentifier>{1d51c49c-d17c-4bca-9585-c498dc38d235}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\memory">
+      <UniqueIdentifier>{5c23caba-027d-4558-bcf8-9cd630bede62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\log">
+      <UniqueIdentifier>{ad1e57e6-4665-4f91-b463-a5a0e53e93b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\json">
+      <UniqueIdentifier>{5e3b4274-8ccb-4225-886a-ec143d4869fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\json\json">
+      <UniqueIdentifier>{769bbd38-19ae-4171-a17a-c68cc4ac766f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\json">
+      <UniqueIdentifier>{2004bd30-81e1-4d75-95e1-f6266fd66c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\json\src">
+      <UniqueIdentifier>{fedc45ec-1828-4495-8d1b-e8277bf4c0ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\memory">
+      <UniqueIdentifier>{e4af7b49-5182-4d86-be22-164176739b23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\rpc">
+      <UniqueIdentifier>{28bef8f1-cf9a-4d6c-8b29-f92c0be92f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\rpc">
+      <UniqueIdentifier>{31647cc1-57bc-4296-9344-7453c98f3499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\server">
+      <UniqueIdentifier>{e6b37ac4-5bfc-4197-a9b2-72c99c480d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\server">
+      <UniqueIdentifier>{5f2a9fc3-c9ad-4f89-95c6-42e9354ef618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\game">
+      <UniqueIdentifier>{706c02d9-055e-4925-8fd1-53652a348e8c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\log\JME_GLog.h">
+      <Filter>include\log</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log\JME_GLogColor.h">
+      <Filter>include\log</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log\JME_GLogLevel.h">
+      <Filter>include\log</Filter>
+    </ClInclude>
+    <ClInclude Include="include\memory\malloc.c.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\memory\nedmalloc.h">
+      <Filter>include\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\JME_Encrypt.h">
+      <Filter>include\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\util\JME_String.h">
+      <Filter>include\util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\autolink.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\config.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\features.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\forwards.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\json.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\json_batchallocator.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\reader.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\value.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\json\writer.h">
+      <Filter>include\json\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json\JME_JsonFile.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="include\net\JME_Message.h">
+      <Filter>include\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\net\JME_ReadBuffer.h">
+      <Filter>include\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\net\JME_TcpSession.h">
+      <Filter>include\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\net\JME_NetHandler.h">
+      <Filter>include\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\net\JME_Core.h">
+      <Filter>include\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rpc\JME_RpcHandler.h">
+      <Filter>include\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rpc\JME_RpcClient.h">
+      <Filter>include\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rpc\JME_Rpc.h">
+      <Filter>include\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rpc\JME_RpcServer.h">
+      <Filter>include\rpc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\net\JME_Acceptor.h">
+      <Filter>include\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\server\JME_ConnectorServer.h">
+      <Filter>include\server</Filter>
+    </ClInclude>
+    <ClInclude Include="include\server\JME_ServerInterface.h">
+      <Filter>include\server</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\JME_Dispatcher.h">
+      <Filter>include\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\JME_GameEventCenter.h">
+      <Filter>include\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\JME_Singleton.h">
+      <Filter>include\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game\JME_Random.h">
+      <Filter>include\game</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\log\JME_GLog.cpp">
+      <Filter>source\log</Filter>
+    </ClCompile>
+    <ClCompile Include="source\util\JME_Encrypt.cpp">
+      <Filter>source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="source\util\JME_String.cpp">
+      <Filter>source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="source\json\src\json_reader.cpp">
+      <Filter>source\json\src</Filter>
+    </ClCompile>
+    <ClCompile Include="source\json\src\json_value.cpp">
+      <Filter>source\json\src</Filter>
+    </ClCompile>
+    <ClCompile Include="source\json\src\json_writer.cpp">
+      <Filter>source\json\src</Filter>
+    </ClCompile>
+    <ClCompile Include="source\json\JME_JsonFile.cpp">
+      <Filter>source\json</Filter>
+    </ClCompile>
+    <ClCompile Include="source\net\JME_TcpSession.cpp">
+      <Filter>source\net</Filter>
+    </ClCompile>
+    <ClCompile Include="source\net\JME_Core.cpp">
+      <Filter>source\net</Filter>
+    </ClCompile>
+    <ClCompile Include="source\memory\nedmalloc.cpp">
+      <Filter>source\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rpc\JME_RpcServer.cpp">
+      <Filter>source\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\net\JME_Acceptor.cpp">
+      <Filter>source\net</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rpc\JME_RpcHandler.cpp">
+      <Filter>source\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\server\JME_ConnectorServer.cpp">
+      <Filter>source\server</Filter>
+    </ClCompile>
+    <ClCompile Include="source\server\JME_ServerInterface.cpp">
+      <Filter>source\server</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rpc\JME_RpcClient.cpp">
+      <Filter>source\rpc</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
