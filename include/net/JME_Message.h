@@ -73,12 +73,10 @@ namespace JMEngine
 			}
 			static void	destory(JME_Message* msg)
 			{
-// 				delete msg;
 				nedalloc::nedfree(msg);
 			}
 			static JME_MessagePtr create(const char* dataPtr,size_t len)
 			{
-// 				void* m = new char(len + sizeof(long));
 				void* m = nedalloc::nedmalloc(len + sizeof(long));
 				return JME_MessagePtr(new(m) JME_Message(dataPtr), destory);
 			}

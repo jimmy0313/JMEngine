@@ -9,6 +9,30 @@ namespace JMEngine
 	namespace rpc
 	{
 
+		JME_RpcCallback::JME_RpcCallback( RpcHandler cb ):
+			_cb(cb),
+			_checkDead(false)
+		{
+		}
+
+		JME_RpcCallback::JME_RpcCallback( RpcHandler cb, size_t t, RpcDeadHandler dcb ):
+			_cb(cb),
+			_checkDead(true)
+		{
+			_dt = DeadTimePtr(new boost::asio::deadline_timer(JMECore.getLogicioService()));
+			_dt->expires_from_now(boost::posix_time::seconds(t));
+			_dt->async_wait(boost::bind(dcb, boost::asio::placeholders::error));
+		}
+
+		JME_RpcCallback::JME_RpcCallbackPtr JME_RpcCallback::create( RpcHandler cb )
+		{
+			return JME_RpcCallbackPtr(new JME_RpcCallback(cb));
+		}
+
+		JME_RpcCallback::JME_RpcCallbackPtr JME_RpcCallback::create( RpcHandler cb, size_t t, RpcDeadHandler dcb )
+		{
+			return JME_RpcCallbackPtr(new JME_RpcCallback(cb, t, dcb));
+		}
 
 		JME_RpcClient::JME_RpcClient( const string& ip, const string& port, size_t buffSize, size_t reconnect ):
 			_methodId(0)
@@ -27,7 +51,7 @@ namespace JMEngine
 			return JMEngine::rpc::JME_RpcClient::JME_RpcClientPtr(new JME_RpcClient(ip, port, reconnect, buffSize));
 		}
 
-		bool JME_RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, RpcCBHandler cb )
+		bool JME_RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb )
 		{
 			if(!_session->isOk())
 			{
@@ -42,7 +66,27 @@ namespace JMEngine
 				JME_Rpc r(++_methodId, method, params);
 				string m = r.serializeAsString();
 				JME_Message msg(1, m);	
-				_cbs[_methodId] = cb;
+				_cbs[_methodId] = JME_RpcCallback::create(cb);
+
+				return _session->writeMessage(msg);
+			}
+			catch(std::exception& e)
+			{
+				LogE << "Call rpc function failed, error: " << e.what() << LogEnd;
+			}
+			return false;
+		}
+
+		bool JME_RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb, size_t dt, JME_RpcCallback::RpcDeadHandler dcb )
+		{
+			try
+			{
+				boost::mutex::scoped_lock lock(_mutex);
+
+				JME_Rpc r(++_methodId, method, params);
+				string m = r.serializeAsString();
+				JME_Message msg(1, m);	
+				_cbs[_methodId] = JME_RpcCallback::create(cb, dt, dcb);
 
 				return _session->writeMessage(msg);
 			}
@@ -80,7 +124,10 @@ namespace JMEngine
 			auto it = _cbs.find(r._rpcId);
 			if (it != _cbs.end())
 			{
-				it->second(r);
+				if (it->second->_checkDead)
+					it->second->_dt->cancel();
+
+				it->second->_cb(r);
 
 				_cbs.erase(it);
 			}
