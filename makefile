@@ -80,7 +80,6 @@ all: checkdir $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(Q)ar -cr $@ $(OBJECTS)
-	@ln -sf $(notdir $(TARGET)) $(BIN_DIR)/libJMEngile.0.9.so
 
 $(OBJECT_DIR)%.o:%.cpp
 	$(Q)$(CPP) $(strip $(CPPALL_CFLAGS)) -c $< -o $@
