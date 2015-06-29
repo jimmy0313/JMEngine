@@ -27,7 +27,7 @@ namespace JMEngine
 			typedef map<int, MessageHandler> MessageHandlerMap;
 		public:
 
-			static void regMessageHandler(const char* method, MessageHandler handler);
+			static void regMessageHandler(int msgId, MessageHandler handler);
 			static void execMessageHandler(int msgId, JMEngine::net::JME_TcpSessionPtr session, const T& params);
 
 		private:
@@ -35,7 +35,7 @@ namespace JMEngine
 		};
 
 		template<class T>
-		void JMEngine::game::JME_Dispatcher<T>::regMessageHandler( const char* method, MessageHandler handler )
+		void JMEngine::game::JME_Dispatcher<T>::regMessageHandler( int msgId, MessageHandler handler )
 		{
 			auto res = _handleMap.insert(make_pair(msgId,handler)); 
 			if(!res.second)
@@ -48,7 +48,7 @@ namespace JMEngine
 		template<class T>
 		void JMEngine::game::JME_Dispatcher<T>::execMessageHandler( int msgId, JMEngine::net::JME_TcpSessionPtr session, const T& params )
 		{
-			typename auto it = _handleMap.find(msgId);
+			auto it = _handleMap.find(msgId);
 			if(it != _handleMap.end())
 			{
 				it->second(session, params);
