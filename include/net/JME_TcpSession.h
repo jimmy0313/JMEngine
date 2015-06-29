@@ -22,7 +22,7 @@ namespace JMEngine
 {
 	namespace net
 	{
-		class JME_TcpSession final:
+		class JME_TcpSession :
 			public boost::enable_shared_from_this<JME_TcpSession>
 		{
 			enum SessionStatus
@@ -33,6 +33,7 @@ namespace JMEngine
 			};
 		public:
 			typedef boost::shared_ptr<JME_TcpSession> JME_TcpSessionPtr;
+			JME_TcpSession();
 			JME_TcpSession(JME_NetHandler::JME_NetHandlerPtr net_handler, size_t n = MaxMsgLength, size_t reconnect = 5); // default buffer size
 			~JME_TcpSession();
 
@@ -63,7 +64,8 @@ namespace JMEngine
 			// write message 
 			void writeLock(const char* dataPtr, const int len);
 			bool writeMessage(const JME_Message& msg);
-			
+			bool writeMessage(JME_Message::JME_MessagePtr msg);
+
 		private:
 			void onConnect();
 			void onReconnect(boost::shared_ptr<boost::asio::deadline_timer> t);

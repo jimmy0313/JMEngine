@@ -35,7 +35,7 @@ namespace JMEngine
 			int _netId;
 			int _bindId;
 		};
-		struct JME_Message final: public MessageHeader
+		struct JME_Message : public MessageHeader
 		{
 			typedef	boost::shared_ptr<JMEngine::net::JME_Message>	JME_MessagePtr;
 			const char*	_msgData;

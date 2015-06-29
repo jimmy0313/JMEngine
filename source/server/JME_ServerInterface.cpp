@@ -33,8 +33,11 @@ namespace JMEngine
 				auto r = JME_RpcClient::create(c["ip"].asString(), c["port"].asString(), c["reconnect"].asUInt(), c["buffer_size"].asUInt());
 				_serverRPC[c["name"].asString()] = r;
 			}
-			auto& clientConf = rpc["client"];
-			_clientRPC = JME_RpcServer::create(JME_RpcHandler::create(), clientConf["port"].asUInt(), clientConf["buffer_size"].asUInt());
+			if (rpc.isMember("client"))
+			{
+				auto& clientConf = rpc["client"];
+				_clientRPC = JME_RpcServer::create(JME_RpcHandler::create(), clientConf["port"].asUInt(), clientConf["buffer_size"].asUInt());
+			}
 
 			onInit();
 

@@ -14,7 +14,7 @@ namespace JMEngine
 {
 	namespace net
 	{
-		class JME_TcpAcceptor final
+		class JME_TcpAcceptor
 		{
 		public:
 			typedef boost::shared_ptr<JME_TcpAcceptor> JME_TcpAcceptorPtr;

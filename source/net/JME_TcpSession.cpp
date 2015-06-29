@@ -211,6 +211,11 @@ namespace JMEngine
 			return false;
 		}
 
+		bool JME_TcpSession::writeMessage( JME_Message::JME_MessagePtr msg )
+		{
+			return writeMessage(*msg);
+		}
+
 		void JME_TcpSession::writeLock(const char* data_ptr,int len)
 		{
 			if (!isOk())
@@ -267,6 +272,22 @@ namespace JMEngine
 			{
 				LogE << e.what() << LogEnd;
 			}
+		}
+
+		JME_TcpSession::JME_TcpSession():
+			_socket(JMECore.getNetIoService()),
+			_buff(0),
+			_writeBufferSize(0),
+			_writing(false),
+			_writeBlockTimes(0),
+			_reading(false),
+			_readBlockTimes(0),
+			_reconnectInterval(0),
+			_status(Disconnected)
+		{
+			_writeBuffer = NULL;
+			_writeBufferOffest = 0;
+
 		}
 
 		JME_TcpSession::JME_TcpSession( JME_NetHandler::JME_NetHandlerPtr net_handler, size_t n /*= MaxMsgLength*/, size_t reconnect/* = 5*/ ):

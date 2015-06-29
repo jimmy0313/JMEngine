@@ -48,7 +48,7 @@ namespace JMEngine
 		};
 
 
-		class JME_RpcClient final : 
+		class JME_RpcClient : 
 			public JMEngine::net::JME_NetHandler,
 			public boost::enable_shared_from_this<JME_RpcClient>
 		{

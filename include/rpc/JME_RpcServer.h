@@ -18,7 +18,7 @@ namespace JMEngine
 {
 	namespace rpc
 	{
-		class JME_RpcServer final/* : public JMEngine::net::JME_AcceptorHandler*/
+		class JME_RpcServer
 		{
 		public:
 			typedef boost::shared_ptr<JME_RpcServer> JME_RpcServerPtr;
