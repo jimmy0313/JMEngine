@@ -15,14 +15,13 @@ namespace JMEngine
 		{
 		}
 
-		JME_RpcCallback::JME_RpcCallback( RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId ):
+		JME_RpcCallback::JME_RpcCallback( JME_RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId ):
 			_cb(cb),
-			_checkDead(true),
-			_methodId(methodId)
+			_checkDead(true)
 		{
 			_dt = DeadTimePtr(new boost::asio::deadline_timer(JMECore.getLogicioService()));
 			_dt->expires_from_now(boost::posix_time::seconds(t));
-			_dt->async_wait(boost::bind(dcb, boost::asio::placeholders::error, methodId));
+			_dt->async_wait(boost::bind(JME_RpcClient::RpcDeadCallback, client, boost::asio::placeholders::error, methodId, dcb));
 		}
 
 		JME_RpcCallback::JME_RpcCallbackPtr JME_RpcCallback::create( RpcHandler cb )
@@ -30,9 +29,9 @@ namespace JMEngine
 			return JME_RpcCallbackPtr(new JME_RpcCallback(cb));
 		}
 
-		JME_RpcCallback::JME_RpcCallbackPtr JME_RpcCallback::create( RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId )
+		JME_RpcCallback::JME_RpcCallbackPtr JME_RpcCallback::create( JME_RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId )
 		{
-			return JME_RpcCallbackPtr(new JME_RpcCallback(cb, t, dcb, methodId));
+			return JME_RpcCallbackPtr(new JME_RpcCallback(client, cb, t, dcb, methodId));
 		}
 
 		JME_RpcClient::JME_RpcClient( const string& ip, const string& port, size_t buffSize, size_t reconnect ):
@@ -87,7 +86,7 @@ namespace JMEngine
 				JME_Rpc r(++_methodId, method, params);
 				string m = r.serializeAsString();
 				JME_Message msg(1, m);	
-				_cbs[_methodId] = JME_RpcCallback::create(cb, dt, dcb, _methodId);
+				_cbs[_methodId] = JME_RpcCallback::create(shared_from_this(), cb, dt, dcb, _methodId);
 
 				return _session->writeMessage(msg);
 			}
@@ -149,6 +148,15 @@ namespace JMEngine
 			{
 				_cbs.erase(it);
 			}
+		}
+
+		void JME_RpcClient::RpcDeadCallback( JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, JME_RpcCallback::RpcDeadHandler dcb )
+		{
+			if (err)
+				return;
+
+			client->removeDeadRPC(methodId);
+			dcb();
 		}
 	}
 }
