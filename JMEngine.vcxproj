@@ -66,6 +66,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\db\JME_DBPool.h" />
     <ClInclude Include="include\game\JME_Dispatcher.h" />
     <ClInclude Include="include\game\JME_GameEventCenter.h" />
     <ClInclude Include="include\game\JME_Random.h" />

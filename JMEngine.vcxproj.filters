@@ -58,6 +58,12 @@
     <Filter Include="include\game">
       <UniqueIdentifier>{706c02d9-055e-4925-8fd1-53652a348e8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\db">
+      <UniqueIdentifier>{cf0d55bb-be0b-4b16-8b14-4b138c2e4ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\db">
+      <UniqueIdentifier>{2b594360-a1e7-45d8-8a06-1ccc13d46705}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\log\JME_GLog.h">
@@ -158,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="include\game\JME_Random.h">
       <Filter>include\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\db\JME_DBPool.h">
+      <Filter>include\db</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
