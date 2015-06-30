@@ -3,3 +3,6 @@
 第三方库列表
 protobuf
 boost.1.49.0
+
+相关使用示例在 JMEngineTest项目里
+地址： https://git.oschina.net/JimmyH/JMEngineTest
