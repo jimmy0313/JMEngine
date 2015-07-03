@@ -49,12 +49,6 @@
     <Filter Include="source\rpc">
       <UniqueIdentifier>{31647cc1-57bc-4296-9344-7453c98f3499}</UniqueIdentifier>
     </Filter>
-    <Filter Include="include\server">
-      <UniqueIdentifier>{e6b37ac4-5bfc-4197-a9b2-72c99c480d43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\server">
-      <UniqueIdentifier>{5f2a9fc3-c9ad-4f89-95c6-42e9354ef618}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\game">
       <UniqueIdentifier>{706c02d9-055e-4925-8fd1-53652a348e8c}</UniqueIdentifier>
     </Filter>
@@ -147,12 +141,6 @@
     <ClInclude Include="include\net\JME_Acceptor.h">
       <Filter>include\net</Filter>
     </ClInclude>
-    <ClInclude Include="include\server\JME_ConnectorServer.h">
-      <Filter>include\server</Filter>
-    </ClInclude>
-    <ClInclude Include="include\server\JME_ServerInterface.h">
-      <Filter>include\server</Filter>
-    </ClInclude>
     <ClInclude Include="include\game\JME_Dispatcher.h">
       <Filter>include\game</Filter>
     </ClInclude>
@@ -166,6 +154,9 @@
       <Filter>include\game</Filter>
     </ClInclude>
     <ClInclude Include="include\db\JME_DBPool.h">
+      <Filter>include\db</Filter>
+    </ClInclude>
+    <ClInclude Include="include\db\JME_MongoConnection.h">
       <Filter>include\db</Filter>
     </ClInclude>
   </ItemGroup>
@@ -209,14 +200,11 @@
     <ClCompile Include="source\rpc\JME_RpcHandler.cpp">
       <Filter>source\rpc</Filter>
     </ClCompile>
-    <ClCompile Include="source\server\JME_ConnectorServer.cpp">
-      <Filter>source\server</Filter>
-    </ClCompile>
-    <ClCompile Include="source\server\JME_ServerInterface.cpp">
-      <Filter>source\server</Filter>
-    </ClCompile>
     <ClCompile Include="source\rpc\JME_RpcClient.cpp">
       <Filter>source\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\db\JME_MongoConnection.cpp">
+      <Filter>source\db</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

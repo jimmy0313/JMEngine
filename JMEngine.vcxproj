@@ -19,7 +19,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -45,7 +45,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>include;include/net;include/log;include/util;include/json;include/memory;include/rpc;include/server</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;include/net;include/log;include/util;include/json;include/memory;include/rpc;include/server;include/mongodb;include/db</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -67,6 +67,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\db\JME_DBPool.h" />
+    <ClInclude Include="include\db\JME_MongoConnection.h" />
     <ClInclude Include="include\game\JME_Dispatcher.h" />
     <ClInclude Include="include\game\JME_GameEventCenter.h" />
     <ClInclude Include="include\game\JME_Random.h" />
@@ -96,12 +97,11 @@
     <ClInclude Include="include\rpc\JME_RpcClient.h" />
     <ClInclude Include="include\rpc\JME_RpcHandler.h" />
     <ClInclude Include="include\rpc\JME_RpcServer.h" />
-    <ClInclude Include="include\server\JME_ConnectorServer.h" />
-    <ClInclude Include="include\server\JME_ServerInterface.h" />
     <ClInclude Include="include\util\JME_Encrypt.h" />
     <ClInclude Include="include\util\JME_String.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\db\JME_MongoConnection.cpp" />
     <ClCompile Include="source\json\JME_JsonFile.cpp" />
     <ClCompile Include="source\json\src\json_reader.cpp" />
     <ClCompile Include="source\json\src\json_value.cpp" />
@@ -114,8 +114,6 @@
     <ClCompile Include="source\rpc\JME_RpcClient.cpp" />
     <ClCompile Include="source\rpc\JME_RpcHandler.cpp" />
     <ClCompile Include="source\rpc\JME_RpcServer.cpp" />
-    <ClCompile Include="source\server\JME_ConnectorServer.cpp" />
-    <ClCompile Include="source\server\JME_ServerInterface.cpp" />
     <ClCompile Include="source\util\JME_Encrypt.cpp" />
     <ClCompile Include="source\util\JME_String.cpp" />
   </ItemGroup>
