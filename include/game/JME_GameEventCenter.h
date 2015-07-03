@@ -57,8 +57,6 @@ namespace JMEngine
 		template<class T>
 		class GameEventCenter
 		{
-			CreateSingletonClass(GameEventCenter<T>);
-
 		public:
 			typedef EventObserver<T> Observer;
 			typedef map<T,Observer*> EventMap;

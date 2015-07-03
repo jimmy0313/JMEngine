@@ -42,11 +42,9 @@ protected:
 class JME_Random
 {
 public:
-	static JME_Random* getInstance()
-	{
-		static JME_Random* pInstance = new JME_Random;
-		return pInstance;
-	}
+public:
+	JME_Random(void){ _randomSeed = time(NULL); };
+	virtual ~JME_Random(void){};
 
 	int randomInt()
 	{
@@ -93,12 +91,6 @@ public:
 		}
 		return -1;
 	}
-private:
-	JME_Random(void){ _randomSeed = time(NULL); };
-	virtual ~JME_Random(void){};
-	JME_Random(const JME_Random&){};
-	JME_Random& operator = (const JME_Random&){};
-
 private:
 	time_t _randomSeed;
 };
