@@ -252,9 +252,11 @@ namespace JMEngine
 
 				logToScreen("{").logToScreen(functionName).logToScreen(":").logToScreen(lineNumber).logToScreen(":").logToScreen(this_thread).logToScreen("}");
 
+				logToScreen(" ");
 				setColor(color);
-				logToScreen(" ["+getGLogLevelName(level)+"] ");
+				logToScreen("["+getGLogLevelName(level)+"]");
 				setColor(GLogColor(White));
+				logToScreen(" ");
 			}
 
 			return getInstance();

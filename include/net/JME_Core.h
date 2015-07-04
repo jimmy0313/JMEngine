@@ -60,6 +60,8 @@ namespace JMEngine
 			boost::asio::io_service& getNetIoService();
 			boost::asio::io_service& getLogicioService();
 
+			void stop();
+
 		private:
 			JME_Thread::JME_ThreadPtr _netThread;
 			JME_Thread::JME_ThreadPtr _logicThread;
