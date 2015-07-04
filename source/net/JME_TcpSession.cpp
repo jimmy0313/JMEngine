@@ -283,7 +283,8 @@ namespace JMEngine
 			_reading(false),
 			_readBlockTimes(0),
 			_reconnectInterval(0),
-			_status(Disconnected)
+			_status(Disconnected),
+			_gameStatus(NullGame)
 		{
 			_writeBuffer = NULL;
 			_writeBufferOffest = 0;
@@ -300,7 +301,8 @@ namespace JMEngine
 			_reading(false),
 			_readBlockTimes(0),
 			_reconnectInterval(reconnect),
-			_status(Disconnected)
+			_status(Disconnected),
+			_gameStatus(NullGame)
 		{
 			_writeBuffer = (char*)nedalloc::nedmalloc(n);
 			_writeBufferOffest = 0;

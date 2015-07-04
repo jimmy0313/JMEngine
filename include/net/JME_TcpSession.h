@@ -32,6 +32,12 @@ namespace JMEngine
 				Connecting = 3,
 			};
 		public:
+			enum GameStatus
+			{
+				NullGame = 0,
+				InGame = 1,
+			};
+		public:
 			typedef boost::shared_ptr<JME_TcpSession> JME_TcpSessionPtr;
 			JME_TcpSession();
 			JME_TcpSession(JME_NetHandler::JME_NetHandlerPtr net_handler, size_t n = MaxMsgLength, size_t reconnect = 5); // default buffer size
@@ -45,6 +51,9 @@ namespace JMEngine
 
 			inline const string& getIp() { return _ip; }
 			inline const string& getPort() { return _port; }
+
+			inline void setGameStatus(GameStatus status) { _gameStatus = status; }
+			inline GameStatus getGameStatus() { return _gameStatus; }
 
 			void connect(const string& ip, const string& port);
 			void reconnect();
@@ -107,6 +116,7 @@ namespace JMEngine
 			string _port;
 
 			SessionStatus _status;	//¡¨Ω”÷–
+			GameStatus _gameStatus;
 		};
 	}
 }
