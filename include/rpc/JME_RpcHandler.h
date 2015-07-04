@@ -24,6 +24,9 @@ namespace JMEngine
 			typedef boost::shared_ptr<JME_RpcHandler> JME_RpcHandlerPtr;
 			typedef boost::function<void(JME_RpcServerPtr conn, JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params)> RpcHandler;
 		public:
+			template<class T>
+			static void bindHandler();
+
 			static JME_RpcHandler::JME_RpcHandlerPtr create();
 			static void regRpcHandler(const char* method, RpcHandler handler);
 			static void execRpcHandler(JME_RpcServerPtr conn, JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params);
@@ -31,6 +34,14 @@ namespace JMEngine
 		private:
 			static map<string, RpcHandler> _handlers;
 		};
+
+		template<class T>
+		void JMEngine::rpc::JME_RpcHandler::bindHandler()
+		{
+			auto handler = boost::shared_ptr<T>(new T);
+			handler->init();
+		}
+
 	}
 }
 #endif // JME_RpcHandler_h__
