@@ -13,7 +13,8 @@
 				
 				外部使用只需通过DBHelper获取数据库驱动对象，无需考虑驱动对象释放问题
 *********************************************************************/
-#include <boost/thread/mutex.hpp>
+#include "boost/thread/mutex.hpp"
+#include "boost/function.hpp"
 #include <deque>
 #include "JME_GLog.h"
 
@@ -67,13 +68,13 @@ namespace JMEngine
 		{
 		public:
 			typedef deque<T*> ConnDeque;
-			typedef boost::function<bool(T*)>	ConnecttHandler;
+			typedef boost::function<bool(T*)>	ConnectHandler;
 			typedef boost::shared_ptr<DBPool<T> > DBPoolPtr;
 
 			template<class T1> 
 			friend class DBHelper;	//友元，允许访问私有方法
 		public:
-			DBPool(size_t n, ConnecttHandler handler)
+			DBPool(size_t n, ConnectHandler handler)
 			{
 				init(n, handler);
 			}
@@ -85,13 +86,13 @@ namespace JMEngine
 				}
 			}
 
-			static typename DBPool<T>::DBPoolPtr create(size_t n, ConnecttHandler handler)
+			static typename DBPool<T>::DBPoolPtr create(size_t n, ConnectHandler handler)
 			{
 				return typename DBPool<T>::DBPoolPtr(new DBPool<T>(n, handler));
 			}
 			
 		private:
-			void init(size_t n, ConnecttHandler handler)
+			void init(size_t n, ConnectHandler handler)
 			{
 				if (!n)
 				{
@@ -144,7 +145,7 @@ namespace JMEngine
 			}
 		private:
 			ConnDeque _connPool;
-			ConnecttHandler _connectHandler;
+			ConnectHandler _connectHandler;
 			boost::mutex _mutex;
 		}; 
 
