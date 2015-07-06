@@ -27,12 +27,53 @@ namespace JMEngine
 			typedef map<int, MessageHandler> MessageHandlerMap;
 		public:
 
+			//************************************
+			// Method:    regMessageHandler
+			// FullName:  JMEngine::game::JME_Dispatcher<T>::regMessageHandler
+			// Access:    public static 
+			// Returns:   void
+			// Qualifier: reg handler for msgId
+			// Parameter: int msgId
+			// Parameter: MessageHandler handler
+			//************************************
 			static void regMessageHandler(int msgId, MessageHandler handler);
+
+			//************************************
+			// Method:    regMessageHandler
+			// FullName:  JMEngine::game::JME_Dispatcher<T>::regMessageHandler
+			// Access:    public static 
+			// Returns:   void
+			// Qualifier: reg handler from beginMsg to endMsg
+			// Parameter: int beginMsg
+			// Parameter: int endMsg
+			// Parameter: MessageHandler handler
+			//************************************
+
+			static void regMessageHandler(int beginMsg, int endMsg, MessageHandler handler);
+			//************************************
+			// Method:    execMessageHandler
+			// FullName:  JMEngine::game::JME_Dispatcher<T>::execMessageHandler
+			// Access:    public static 
+			// Returns:   void
+			// Qualifier: call msg handler for msgId
+			// Parameter: int msgId
+			// Parameter: JMEngine::net::JME_TcpSessionPtr session
+			// Parameter: const T & params
+			//************************************
 			static void execMessageHandler(int msgId, JMEngine::net::JME_TcpSessionPtr session, const T& params);
 
 		private:
 			static MessageHandlerMap _handleMap;
 		};
+
+		template<class T>
+		void JMEngine::game::JME_Dispatcher<T>::regMessageHandler( int beginMsg, int endMsg, MessageHandler handler )
+		{
+			for (int i = beginMsg; i <= endMsg; i++)
+			{
+				regMessageHandler(i, handler);
+			}
+		}
 
 		template<class T>
 		void JMEngine::game::JME_Dispatcher<T>::regMessageHandler( int msgId, MessageHandler handler )
