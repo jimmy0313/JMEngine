@@ -9,7 +9,8 @@
 #include "boost/lexical_cast.hpp"
 #include <vector>
 
-#define JMECore boost::detail::thread::singleton<JMEngine::net::IoServiceCore>::instance()
+// #define JMECore boost::detail::thread::singleton<JMEngine::net::IoServiceCore>::instance()
+#define JMECore (*JMEngine::net::IoServiceCore::getInstance())
 
 using namespace std;
 using namespace boost;
@@ -56,6 +57,8 @@ namespace JMEngine
 		public:
 			IoServiceCore(void);
 			~IoServiceCore(void);
+
+			static IoServiceCore* getInstance();
 
 			boost::asio::io_service& getNetIoService();
 			boost::asio::io_service& getLogicioService();
