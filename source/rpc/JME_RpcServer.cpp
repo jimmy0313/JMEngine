@@ -16,7 +16,7 @@ namespace JMEngine
 		JME_RpcServer::JME_RpcServer( JME_RpcHandler::JME_RpcHandlerPtr handler, unsigned short port, size_t bufferSize ):
 			_handler(handler)
 		{
-			_acceptorPtr = JMEngine::net::JME_TcpAcceptor::create(JME_RpcSessionNetHandler::create(JME_RpcServerPtr(this), handler), port);
+			_acceptorPtr = JMEngine::net::JME_TcpAcceptor::create(JME_RpcSessionNetHandler::create(this, handler), port);
  			_acceptorPtr->accept(0, bufferSize);
 			LogT << "Listen on port {" << port << "} for rpc service" << LogEnd;
 		}
@@ -36,7 +36,7 @@ namespace JMEngine
 
 
 
-		JMEngine::rpc::JME_RpcSessionNetHandler::JME_RpcSessionNetHandlerPtr JME_RpcSessionNetHandler::create(JME_RpcServer::JME_RpcServerPtr server, JME_RpcHandler::JME_RpcHandlerPtr handler)
+		JMEngine::rpc::JME_RpcSessionNetHandler::JME_RpcSessionNetHandlerPtr JME_RpcSessionNetHandler::create(JME_RpcServer* server, JME_RpcHandler::JME_RpcHandlerPtr handler)
 		{
 			return JMEngine::rpc::JME_RpcSessionNetHandler::JME_RpcSessionNetHandlerPtr(new JME_RpcSessionNetHandler(server, handler));
 		}
@@ -86,7 +86,7 @@ namespace JMEngine
 			}
 		}
 
-		JME_RpcSessionNetHandler::JME_RpcSessionNetHandler( JME_RpcServer::JME_RpcServerPtr server, JME_RpcHandler::JME_RpcHandlerPtr handler ):
+		JME_RpcSessionNetHandler::JME_RpcSessionNetHandler( JME_RpcServer* server, JME_RpcHandler::JME_RpcHandlerPtr handler ):
 			_server(server),
 			_handler(handler)
 		{

@@ -37,13 +37,19 @@ namespace JMEngine
 		JME_RpcClient::JME_RpcClient( const string& ip, const string& port, size_t buffSize, size_t reconnect ):
 			_methodId(0)
 		{
-			_session = JMEngine::net::JME_TcpSession::create(JME_RpcClientPtr(this), buffSize, reconnect);
-			_session->connect(ip, port);
+			auto session = JMEngine::net::JME_TcpSession::create(this, buffSize, reconnect);
+			_session = session;
+			session->setAsyncConnect(false);
+			session->connect(ip, port);
 		}
 
 		JME_RpcClient::~JME_RpcClient()
 		{
-			_session->stop();
+			if (!_session.expired())
+			{
+				auto session = _session.lock();
+				session->stop();
+			}
 		}
 
 		JMEngine::rpc::JME_RpcClient::JME_RpcClientPtr JME_RpcClient::create( const string& ip, const string& port, size_t buffSize, size_t reconnect )
@@ -53,7 +59,7 @@ namespace JMEngine
 
 		bool JME_RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb )
 		{
-			if(!_session->isOk())
+			if(!_session.lock()->isOk())
 			{
 				LogE << "Remote server is not connected" << LogEnd;
 				return false;
@@ -68,7 +74,7 @@ namespace JMEngine
 				JME_Message msg(1, m);	
 				_cbs[_methodId] = JME_RpcCallback::create(cb);
 
-				return _session->writeMessage(msg);
+				return _session.lock()->writeMessage(msg);
 			}
 			catch(std::exception& e)
 			{
@@ -88,7 +94,7 @@ namespace JMEngine
 				JME_Message msg(1, m);	
 				_cbs[_methodId] = JME_RpcCallback::create(shared_from_this(), cb, dt, dcb, _methodId);
 
-				return _session->writeMessage(msg);
+				return _session.lock()->writeMessage(msg);
 			}
 			catch(std::exception& e)
 			{
@@ -99,14 +105,14 @@ namespace JMEngine
 
 		void JME_RpcClient::sessionConnectSucceed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session )
 		{
-			_session->start(1);
+			session->start(1);
 
-			LogT << "RPC server{" << _session->getIp() << ":" << _session->getPort() << "}" << " connect succeed" << LogEnd;
+			LogT << "RPC server{" << session->getIp() << ":" << session->getPort() << "}" << " connect succeed" << LogEnd;
 		}
 
 		void JME_RpcClient::sessionConnectFailed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
 		{
-			LogW << "Connect to RPC server {" << session->getIp() << ":" << _session->getPort() << "} failed" << LogEnd;
+			LogW << "Connect to RPC server {" << session->getIp() << ":" << session->getPort() << "} failed" << LogEnd;
 		}
 
 		void JME_RpcClient::sessionDisconnect( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )

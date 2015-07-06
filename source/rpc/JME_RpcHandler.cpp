@@ -21,7 +21,7 @@ namespace JMEngine
 			}
 		}
 
-		void JME_RpcHandler::execRpcHandler( JME_RpcServerPtr conn, JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params )
+		void JME_RpcHandler::execRpcHandler( JME_RpcServer* conn, JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params )
 		{
 			auto it = _handlers.find(params._method);
 			if (it == _handlers.end())

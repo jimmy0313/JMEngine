@@ -44,6 +44,13 @@ namespace JMEngine
 			_logicThread->stop();
 		}
 
+		IoServiceCore* IoServiceCore::getInstance()
+		{
+			static IoServiceCore* _pInstance = new IoServiceCore;
+
+			return _pInstance;
+		}
+
 		JME_Thread::JME_Thread()
 		{
 			_ioService = ioServicePtr(new boost::asio::io_service);

@@ -3,6 +3,7 @@
 
 #include <boost/system/error_code.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 
 namespace JMEngine
 {
@@ -17,6 +18,7 @@ namespace JMEngine
 		{		
 		public:
 			typedef boost::shared_ptr<JME_NetHandler> JME_NetHandlerPtr;
+			typedef boost::weak_ptr<JME_NetHandler> JME_NetHandlerWeakPtr;
 		public:
 			virtual void sessionConnectSucceed(JME_TcpSessionPtr session) = 0;	//该函数将由逻辑线程调用
 			virtual void sessionConnectFailed(JME_TcpSessionPtr session, boost::system::error_code e) = 0; //该函数将由逻辑线程调用

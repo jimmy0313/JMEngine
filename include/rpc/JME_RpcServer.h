@@ -44,8 +44,8 @@ namespace JMEngine
 			typedef boost::shared_ptr<JME_RpcSessionNetHandler> JME_RpcSessionNetHandlerPtr;
 
 		public:
-			JME_RpcSessionNetHandler(JME_RpcServer::JME_RpcServerPtr server, JME_RpcHandler::JME_RpcHandlerPtr handler);
-			static JMEngine::rpc::JME_RpcSessionNetHandler::JME_RpcSessionNetHandlerPtr create(JME_RpcServer::JME_RpcServerPtr server, JME_RpcHandler::JME_RpcHandlerPtr handler);
+			JME_RpcSessionNetHandler(JME_RpcServer* server, JME_RpcHandler::JME_RpcHandlerPtr handler);
+			static JMEngine::rpc::JME_RpcSessionNetHandler::JME_RpcSessionNetHandlerPtr create(JME_RpcServer* server, JME_RpcHandler::JME_RpcHandlerPtr handler);
 
 			void sessionConnectSucceed(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session);
 			void sessionConnectFailed(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
@@ -54,7 +54,7 @@ namespace JMEngine
 			void sessionReadError(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
 		private:
 			JME_RpcHandler::JME_RpcHandlerPtr _handler;
-			JME_RpcServer::JME_RpcServerPtr _server;
+			JME_RpcServer* _server;
 		};
 	}
 }

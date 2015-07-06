@@ -41,10 +41,14 @@ namespace JMEngine
 				JMECore.getLogicioService().post(
 					boost::bind(&JME_NetHandler::sessionConnectSucceed, _acceptorHandler, session));
 			}
-			else
+			else if (error.value() != 995)
 			{
 				accept(reconnect, bufferSize);
 				
+				session->stop();
+			}
+			else
+			{
 				session->stop();
 			}
 		}

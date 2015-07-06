@@ -9,6 +9,7 @@
 #include <boost/thread/thread_time.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/asio.hpp>
 #include <boost/function.hpp>
@@ -39,11 +40,15 @@ namespace JMEngine
 			};
 		public:
 			typedef boost::shared_ptr<JME_TcpSession> JME_TcpSessionPtr;
+			typedef boost::weak_ptr<JME_TcpSession> JME_TcpSessionWeakPtr;
+
 			JME_TcpSession();
-			JME_TcpSession(JME_NetHandler::JME_NetHandlerPtr net_handler, size_t n = MaxMsgLength, size_t reconnect = 5); // default buffer size
+			JME_TcpSession(JME_NetHandler* net_handler, size_t n = MaxMsgLength, size_t reconnect = 5); // default buffer size
 			~JME_TcpSession();
 
 			static JME_TcpSessionPtr create(JME_NetHandler::JME_NetHandlerPtr net_handler, size_t n_buff_size, size_t reconnect = 0);
+			static JME_TcpSessionPtr create(JME_NetHandler* net_handler, size_t n_buff_size, size_t reconnect = 0);
+
 			static void	destory(JME_TcpSession* p);	
 
 			inline int getNetId() { return _net_id; }
@@ -54,6 +59,8 @@ namespace JMEngine
 
 			inline void setGameStatus(GameStatus status) { _gameStatus = status; }
 			inline GameStatus getGameStatus() { return _gameStatus; }
+
+			inline void setAsyncConnect(bool b) { _asyncConnect = b; } 
 
 			void connect(const string& ip, const string& port);
 			void reconnect();
@@ -92,9 +99,10 @@ namespace JMEngine
 			void postReadNull();
 			void postWriteNull();
 			
-			tcp::socket						_socket;
+			tcp::socket _socket;
+			bool _asyncConnect;	//是否需要异步连接， 用于rpc client时， 一般设为false
 
-			JME_NetHandler::JME_NetHandlerPtr _netHandlerPtr;
+			JME_NetHandler* _netHandlerPtr;
 			
 			boost::mutex _writeMutex;
 			boost::mutex _readMutex;

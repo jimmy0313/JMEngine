@@ -81,7 +81,7 @@ namespace JMEngine
 		protected:
 			void removeDeadRPC(int methodId);
 		private:
-			JMEngine::net::JME_TcpSession::JME_TcpSessionPtr _session;
+			JMEngine::net::JME_TcpSession::JME_TcpSessionWeakPtr _session;
 
 			int _methodId;
 			map<int, JME_RpcCallback::JME_RpcCallbackPtr> _cbs;
