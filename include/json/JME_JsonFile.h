@@ -16,6 +16,8 @@ namespace JMEngine
 		int load_jsonfiles_from_dir(const std::string& files_path, vector<string>& vec );
 		int load_jsonfiles_from_dir(const std::string& files_path, vector<Json::Value>& vec );
 		int load_jsonfiles_from_dir(const std::string& files_path, map<int, Json::Value>& m );
+
+		Json::Value createWithString(const string& str);
 	}
 }
 

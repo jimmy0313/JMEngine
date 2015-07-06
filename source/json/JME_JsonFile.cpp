@@ -4,6 +4,7 @@
 #include <boost/xpressive/xpressive_dynamic.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
+#include "JME_GLog.h"
 
 using namespace std;
 using namespace boost::filesystem;
@@ -122,6 +123,18 @@ namespace JMEngine
 				m.insert(make_pair(val["id"].asInt(),val));
 			}
 			return 1;
+		}
+
+		Json::Value createWithString( const string& str )
+		{
+			Json::Value val;
+			Json::Reader reader;
+			if(!reader.parse(str, val))
+			{
+				LogE << reader.getFormatedErrorMessages() << LogEnd;
+				return Json::Value::null;
+			}
+			return val;
 		}
 
 	}
