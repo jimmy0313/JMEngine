@@ -74,7 +74,8 @@ namespace JMEngine
 			template<class T1> 
 			friend class DBHelper;	//友元，允许访问私有方法
 		public:
-			DBPool(size_t n, ConnectHandler handler)
+			DBPool(size_t n, ConnectHandler handler):
+				_connectHandler(handler)
 			{
 				init(n, handler);
 			}
