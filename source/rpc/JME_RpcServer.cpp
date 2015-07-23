@@ -67,9 +67,11 @@ namespace JMEngine
 
 		void JME_RpcSessionNetHandler::sessionReceiveMessage( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, JMEngine::net::JME_MessagePtr msg )
 		{
-			string m = msg->getMessageStr();
-			JME_Rpc r(m);
-			_handler->execRpcHandler(_server, session, r);
+			string param = msg->getMessageStr();
+			JME_Rpc rpc(param);
+			rpc._params = _handler->execRpcHandler(rpc._method, rpc._params);
+
+			_server->response(session, rpc);
 		}
 
 		void JME_RpcSessionNetHandler::sessionReadError( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )

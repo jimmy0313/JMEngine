@@ -112,7 +112,7 @@ namespace JMEngine
 
 		void JME_RpcClient::sessionConnectFailed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
 		{
-			LogW << "Connect to RPC server {" << session->getIp() << ":" << session->getPort() << "} failed" << LogEnd;
+			LogW << "Connect to RPC server {" << session->getIp() << ":" << session->getPort() << "} failed. error: " << e.message() << LogEnd;
 		}
 
 		void JME_RpcClient::sessionDisconnect( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
@@ -133,7 +133,7 @@ namespace JMEngine
 				if (it->second->_checkDead)
 					it->second->_dt->cancel();
 
-				it->second->_cb(r);
+				it->second->_cb(r._params);
 
 				_cbs.erase(it);
 			}

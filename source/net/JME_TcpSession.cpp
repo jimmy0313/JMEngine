@@ -460,6 +460,8 @@ namespace JMEngine
 			}
 			else
 			{
+				_socket.close();
+
 				boost::asio::ip::tcp::endpoint ep(boost::asio::ip::address_v4::from_string(_ip), boost::lexical_cast<int>(_port));
 				boost::system::error_code ec;
 				_socket.connect(ep, ec);

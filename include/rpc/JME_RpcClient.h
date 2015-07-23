@@ -31,7 +31,7 @@ namespace JMEngine
 		class JME_RpcCallback
 		{
 		public:
-			typedef boost::function<void(const JME_Rpc& response)> RpcHandler;
+			typedef boost::function<void(const string& response)> RpcHandler;
 			typedef boost::function<void()> RpcDeadHandler;
 			typedef boost::shared_ptr<boost::asio::deadline_timer> DeadTimePtr;
 			typedef boost::shared_ptr<JME_RpcCallback> JME_RpcCallbackPtr;

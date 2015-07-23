@@ -22,14 +22,14 @@ namespace JMEngine
 		{
 		public:
 			typedef boost::shared_ptr<JME_RpcHandler> JME_RpcHandlerPtr;
-			typedef boost::function<void(JME_RpcServer* conn, JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params)> RpcHandler;
+			typedef boost::function<string(const string& params)> RpcHandler;
 		public:
 			template<class T>
 			static void bindHandler();
 
 			static JME_RpcHandler::JME_RpcHandlerPtr create();
 			static void regRpcHandler(const char* method, RpcHandler handler);
-			static void execRpcHandler(JME_RpcServer* conn, JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params);
+			static string execRpcHandler(const string& method, const string& params);
 
 		private:
 			static map<string, RpcHandler> _handlers;

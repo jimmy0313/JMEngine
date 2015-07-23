@@ -21,16 +21,16 @@ namespace JMEngine
 			}
 		}
 
-		void JME_RpcHandler::execRpcHandler( JME_RpcServer* conn, JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params )
+		string JME_RpcHandler::execRpcHandler( const string& method, const string& params )
 		{
-			auto it = _handlers.find(params._method);
+			auto it = _handlers.find(method);
 			if (it == _handlers.end())
 			{
-				LogE << "Can't find handler for method " << params._method << LogEnd;
+				LogE << "Can't find handler for method " << method << LogEnd;
 			}
 			else
 			{
-				it->second(conn, session, params);
+				return it->second(params);
 			}
 		}
 

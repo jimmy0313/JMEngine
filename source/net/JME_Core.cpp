@@ -1,9 +1,6 @@
 #include "JME_Core.h"
 #include "JME_GLog.h"
 
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-#include <boost/thread/mutex.hpp>
 
 namespace JMEngine
 {
@@ -12,14 +9,8 @@ namespace JMEngine
 		IoServiceCore::IoServiceCore( void )
 		{
 			_netThread = JME_Thread::create();
-			_netThread->run();
-
-			LogT << "Create net thread " << _netThread->getThreadId() << LogEnd;
 
 			_logicThread = JME_Thread::create();
-			_logicThread->run();
-
-			LogT << "Create logic thread " << _logicThread->getThreadId() << LogEnd;
 		}
 
 		IoServiceCore::~IoServiceCore( void )
@@ -51,6 +42,15 @@ namespace JMEngine
 			return _pInstance;
 		}
 
+		void IoServiceCore::start()
+		{
+			_netThread->run();
+			LogT << "Create net thread " << _netThread->getThreadId() << LogEnd;
+
+			_logicThread->run();
+			LogT << "Create logic thread " << _logicThread->getThreadId() << LogEnd;
+		}
+
 		JME_Thread::JME_Thread()
 		{
 			_ioService = ioServicePtr(new boost::asio::io_service);
@@ -77,6 +77,30 @@ namespace JMEngine
 		{
 			_thread = threadPtr(new boost::thread(boost::bind(&boost::asio::io_service::run, _ioService)));
 		}
+
+// #if _MSC_VER >= 1800
+
+		JME_TaskThread::JME_TaskThread():
+			_stop(false)
+		{
+			_thread = boost::thread([this]()
+			{
+				while (!this->_stop)
+				{
+					boost::function<void()> task;
+					{
+						boost::unique_lock<boost::mutex> lock(_mutex);
+						this->_condition.wait(lock, [this]{return this->_stop || !this->_tasks.empty();});
+						if(this->_stop && this->_tasks.empty()) 
+							return;
+						task = boost::move(this->_tasks.front());
+						this->_tasks.pop();
+					}
+					task();
+				}
+			});
+		}
+// #endif // _MSC_VER >= 1800
 
 	}
 }
