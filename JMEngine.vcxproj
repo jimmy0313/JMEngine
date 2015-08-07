@@ -45,7 +45,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>include;include/net;include/log;include/util;include/json;include/memory;include/rpc;include/server;include/mongodb;include/db</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;include/net;include/log;include/util;include/json;include/memory;include/rpc;include/server;include/mongodb;include/db;include/game</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -71,6 +71,7 @@
     <ClInclude Include="include\game\JME_Dispatcher.h" />
     <ClInclude Include="include\game\JME_GameEventCenter.h" />
     <ClInclude Include="include\game\JME_Random.h" />
+    <ClInclude Include="include\game\JME_ServerInterface.h" />
     <ClInclude Include="include\game\JME_Singleton.h" />
     <ClInclude Include="include\json\JME_JsonFile.h" />
     <ClInclude Include="include\json\json\autolink.h" />
@@ -102,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\db\JME_MongoConnection.cpp" />
+    <ClCompile Include="source\game\JME_ServerInterface.cpp" />
     <ClCompile Include="source\json\JME_JsonFile.cpp" />
     <ClCompile Include="source\json\src\json_reader.cpp" />
     <ClCompile Include="source\json\src\json_value.cpp" />

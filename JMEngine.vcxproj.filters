@@ -58,6 +58,9 @@
     <Filter Include="source\db">
       <UniqueIdentifier>{2b594360-a1e7-45d8-8a06-1ccc13d46705}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\game">
+      <UniqueIdentifier>{e23997c9-7409-4c1a-ac0c-632955141be9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\log\JME_GLog.h">
@@ -159,6 +162,9 @@
     <ClInclude Include="include\db\JME_MongoConnection.h">
       <Filter>include\db</Filter>
     </ClInclude>
+    <ClInclude Include="include\game\JME_ServerInterface.h">
+      <Filter>include\game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\log\JME_GLog.cpp">
@@ -205,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="source\db\JME_MongoConnection.cpp">
       <Filter>source\db</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\JME_ServerInterface.cpp">
+      <Filter>source\game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
