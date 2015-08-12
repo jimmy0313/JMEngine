@@ -32,6 +32,7 @@ namespace JMEngine
 			{
 				return it->second(params);
 			}
+			return "";
 		}
 
 		JME_RpcHandler::JME_RpcHandlerPtr JME_RpcHandler::create()

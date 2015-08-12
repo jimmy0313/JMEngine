@@ -85,6 +85,12 @@ namespace JMEngine
 
 		bool JME_RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb, size_t dt, JME_RpcCallback::RpcDeadHandler dcb )
 		{
+			if(!_session.lock()->isOk())
+			{
+				LogE << "Remote server is not connected" << LogEnd;
+				return false;
+			}
+
 			try
 			{
 				boost::mutex::scoped_lock lock(_mutex);

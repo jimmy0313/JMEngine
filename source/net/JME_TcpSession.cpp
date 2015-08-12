@@ -13,6 +13,7 @@ namespace JMEngine
 			try
 			{
 				_ip = _socket.remote_endpoint().address().to_string();
+				_port = boost::lexical_cast<string>(_socket.remote_endpoint().port());
 				_net_id = net_id;
 				_status = Connected;
 				_socket.non_blocking(true);
