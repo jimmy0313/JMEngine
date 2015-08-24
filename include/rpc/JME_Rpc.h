@@ -20,9 +20,9 @@ namespace JMEngine
 			}
 			JME_Rpc(int id, const char* method, const google::protobuf::Message* para):
 				_rpcId(id),
-				_method(method),
-				_params(para->SerializeAsString())
+				_method(method)
 			{
+				para->SerializeToString(&_params);
 			}
 			JME_Rpc(int id, const char* method, const string& para):
 				_rpcId(id),

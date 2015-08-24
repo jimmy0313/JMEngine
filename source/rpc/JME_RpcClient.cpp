@@ -69,9 +69,9 @@ namespace JMEngine
 			{
 				boost::mutex::scoped_lock lock(_mutex);
 
-				JME_Rpc r(++_methodId, method, params);
-				string m = r.serializeAsString();
-				JME_Message msg(1, m);	
+				JME_Rpc rpc(++_methodId, method, params);
+				auto m(boost::move(rpc.serializeAsString()));
+				JME_Message msg(RPCMessage, m);	
 				_cbs[_methodId] = JME_RpcCallback::create(cb);
 
 				return _session.lock()->writeMessage(msg);
@@ -95,9 +95,9 @@ namespace JMEngine
 			{
 				boost::mutex::scoped_lock lock(_mutex);
 
-				JME_Rpc r(++_methodId, method, params);
-				string m = r.serializeAsString();
-				JME_Message msg(1, m);	
+				JME_Rpc rpc(++_methodId, method, params);
+				auto m(boost::move(rpc.serializeAsString()));
+				JME_Message msg(RPCMessage, m);	
 				_cbs[_methodId] = JME_RpcCallback::create(shared_from_this(), cb, dt, dcb, _methodId);
 
 				return _session.lock()->writeMessage(msg);
@@ -111,7 +111,7 @@ namespace JMEngine
 
 		void JME_RpcClient::sessionConnectSucceed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session )
 		{
-			session->start(1);
+			session->start(RPCSession);
 
 			LogT << "RPC server{" << session->getIp() << ":" << session->getPort() << "}" << " connect succeed" << LogEnd;
 		}

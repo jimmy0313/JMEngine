@@ -19,6 +19,8 @@
 #include "JME_NetHandler.h"
 
 using boost::asio::ip::tcp;
+
+const static int RPCSession = 1;
 namespace JMEngine
 {
 	namespace net

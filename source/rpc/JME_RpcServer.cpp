@@ -28,8 +28,8 @@ namespace JMEngine
 
 		void JME_RpcServer::response( JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params )
 		{
-			string m = params.serializeAsString();
-			JMEngine::net::JME_Message msg(1, m);	
+			auto m(boost::move(params.serializeAsString()));
+			JMEngine::net::JME_Message msg(RPCMessage, m);	
 
 			session->writeMessage(msg);
 		}
@@ -43,16 +43,9 @@ namespace JMEngine
 
 		void JME_RpcSessionNetHandler::sessionConnectSucceed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session )
 		{
-			try
-			{
-				LogT << "New rpc client connected from " << session->socket().remote_endpoint().address().to_string() << LogEnd;
+			session->start(RPCSession);
 
-				session->start(1);
-			}
-			catch(boost::system::system_error e)
-			{
-				LogE <<  e.what() << "{" << e.code() << "}" << LogEnd;
-			}
+			LogT << "New rpc client connected from " << session->getIp() << "{" << session->getPort() << "}" << LogEnd;
 		}
 
 		void JME_RpcSessionNetHandler::sessionConnectFailed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
@@ -91,7 +84,7 @@ namespace JMEngine
 			{
 				session->stop();
 
-				LogT << "Rpc client connected from " << session->getIp() << " disconnect" << LogEnd;
+				LogT << "Rpc client connected from " << session->getIp() << "{" << session->getPort() << "} disconnect" << LogEnd;
 			}
 			catch(boost::system::system_error e)
 			{

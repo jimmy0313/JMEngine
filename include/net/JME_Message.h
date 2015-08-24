@@ -9,6 +9,9 @@
 #include <string>
 
 using namespace std;
+
+const static short RPCMessage = 1;	//rpc 消息
+const static short HeartBeat = 2;	//心跳 消息
 namespace JMEngine
 {
 	namespace net
