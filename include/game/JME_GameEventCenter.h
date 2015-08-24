@@ -63,6 +63,16 @@ namespace JMEngine
 			enum EventSlot{ DEFAULT_SLOT = 50 };	//事件执行优先级,值越小,优先级越高
 
 		public:
+			//************************************
+			// Method:    regEventHandler
+			// FullName:  JMEngine::game::GameEventCenter<T>::regEventHandler
+			// Access:    public 
+			// Returns:   void
+			// Qualifier: 监听事件，回调函数为使用boost::bind包装过的函数对象, 同时获取一个连接对象， 通过该对象， 可以移除事件监听
+			// Parameter: const T & evt
+			// Parameter: typename Observer::EventHandlerFunction handler
+			// Parameter: typename Observer::EventConnectorPtr conn
+			//************************************
 			void regEventHandler(const T& evt, typename Observer::EventHandlerFunction handler, typename Observer::EventConnectorPtr conn)
 			{
 				auto it = _events.find(evt);
@@ -77,6 +87,17 @@ namespace JMEngine
 					_events.insert(make_pair(evt,obs));
 				}
 			}
+			//************************************
+			// Method:    regEventHandler
+			// FullName:  JMEngine::game::GameEventCenter<T>::regEventHandler
+			// Access:    public 
+			// Returns:   void
+			// Qualifier: 根据指定优先级(slot) 监听事件
+			// Parameter: int slot
+			// Parameter: const T & evt
+			// Parameter: typename Observer::EventHandlerFunction handler
+			// Parameter: typename Observer::EventConnectorPtr conn
+			//************************************
 			void regEventHandler(int slot, const T& evt, typename Observer::EventHandlerFunction handler, typename Observer::EventConnectorPtr conn)
 			{
 				auto it = _events.find(evt);
@@ -91,6 +112,15 @@ namespace JMEngine
 					_events.insert(make_pair(evt,obs));
 				}
 			}
+			//************************************
+			// Method:    regEventHandler
+			// FullName:  JMEngine::game::GameEventCenter<T>::regEventHandler
+			// Access:    public 
+			// Returns:   void
+			// Qualifier: 监听事件， 回调函数为c风格函数指针
+			// Parameter: const T & evt
+			// Parameter: typename Observer::EventHandler handler
+			//************************************
 			void regEventHandler(const T& evt, typename Observer::EventHandler handler)
 			{
 				auto it = _events.find(evt);
@@ -105,6 +135,16 @@ namespace JMEngine
 					_events.insert(make_pair(evt,obs));
 				}
 			}
+			//************************************
+			// Method:    regEventHandler
+			// FullName:  JMEngine::game::GameEventCenter<T>::regEventHandler
+			// Access:    public 
+			// Returns:   void
+			// Qualifier:
+			// Parameter: int slot
+			// Parameter: const T & evt
+			// Parameter: typename Observer::EventHandler handler
+			//************************************
 			void regEventHandler(int slot, const T& evt, typename Observer::EventHandler handler)
 			{
 				auto it = _events.find(evt);
@@ -121,6 +161,15 @@ namespace JMEngine
 			}
 
 			//remove event's handler
+			//************************************
+			// Method:    removeEventHandler
+			// FullName:  JMEngine::game::GameEventCenter<T>::removeEventHandler
+			// Access:    public 
+			// Returns:   void
+			// Qualifier: 移除对指定事件的监听， 不可用于回调函数为boost::bind函数对象的场景(该场景需要使用连接对象)
+			// Parameter: const T & evt
+			// Parameter: typename Observer::EventHandler handler
+			//************************************
 			void removeEventHandler(const T& evt, typename Observer::EventHandler handler)
 			{
 				auto it = _events.find(evt);
@@ -132,6 +181,14 @@ namespace JMEngine
 			}
 			//exec event handler
 			//exec native event handler
+			//************************************
+			// Method:    eventCallback
+			// FullName:  JMEngine::game::GameEventCenter<T>::eventCallback
+			// Access:    public 
+			// Returns:   void
+			// Qualifier: 仅执行本地事件回调
+			// Parameter: const T & evt
+			//************************************
 			void eventCallback(const T& evt)
 			{
 				auto it = _events.find(evt);
@@ -146,7 +203,31 @@ namespace JMEngine
 					}
 				}
 			}
+
+			//************************************
+			// Method:    remoteEventCallback
+			// FullName:  JMEngine::game::GameEventCenter<T>::remoteEventCallback
+			// Access:    public 
+			// Returns:   void
+			// Qualifier: 仅抛出远程事件, 无本地事件回调
+			// Parameter: const T & evt
+			// Parameter: typename Observer::RemoteHandler handler
+			//************************************
+			void remoteEventCallback(const T& evt, , typename Observer::RemoteHandler handler)
+			{
+				handler(evt);
+			}
+
 			//exec remote event handler ext
+			//************************************
+			// Method:    eventCallback
+			// FullName:  JMEngine::game::GameEventCenter<T>::eventCallback
+			// Access:    public 
+			// Returns:   void
+			// Qualifier: 执行本地事件的同时抛出远程事件
+			// Parameter: const T & evt
+			// Parameter: typename Observer::RemoteHandler handler
+			//************************************
 			void eventCallback(const T& evt, typename Observer::RemoteHandler handler)
 			{
 				auto it = _events.find(evt);
@@ -160,6 +241,7 @@ namespace JMEngine
 						_events.erase(it);
 					}
 				}
+				handler(evt);
 			}
 
 		private:

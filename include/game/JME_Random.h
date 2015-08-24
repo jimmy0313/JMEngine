@@ -16,7 +16,10 @@
 #include <vector>
 #include "JME_Singleton.h"
 
+#include "boost/random.hpp"
+
 #define Rnd Random::getInstance
+
 
 class JME_RandSeed
 {
@@ -24,16 +27,16 @@ public:
 	friend class JME_Random;
 	JME_RandSeed(){}
 
-	JME_RandSeed(int prob, int bindId):
+	JME_RandSeed(int prob, void* bind):
 		_prob(prob),
-		_bindId(bindId),
+		_bind(bind),
 		_begin(0),
 		_end(0)
 	{
 	}
 public:
 	int _prob;	//概率
-	int _bindId;	//绑定的相关ID
+	void* _bind;	//绑定的对象
 protected:
 	int _begin;
 	int _end;
@@ -48,17 +51,23 @@ public:
 
 	int randomInt()
 	{
-		srand(_randomSeed);
-		int ra = std::max(1, rand());
-		_randomSeed += ra;
-		return ra;
+		boost::mt19937 gen(time(NULL) + _randomSeed);
+		boost::uniform_int<> dist(0, INT_MAX);
+
+		boost::variate_generator<boost::mt19937, boost::uniform_int<> > die(gen, dist);
+
+		return _randomSeed = die();
 	}
 	int randomInt(int start, int end)
 	{
 		assert(start <= end);
 
-		int ra = randomInt() % (end - start + 1) + start;
-		return ra;
+		boost::mt19937 gen(time(NULL) + _randomSeed);
+		boost::uniform_int<> dist(start, end);
+
+		boost::variate_generator<boost::mt19937, boost::uniform_int<> > die(gen, dist);
+
+		return _randomSeed = die();
 	}
 
 	bool randomGreater(int perc)
@@ -67,7 +76,7 @@ public:
 		return ra >= perc;
 	}
 
-	int randomBySeeds(std::vector<JME_RandSeed>& seeds)
+	void* randomBySeeds(std::vector<JME_RandSeed>& seeds)
 	{
 		assert(!seeds.empty());
 
@@ -87,9 +96,9 @@ public:
 		for (auto it = seeds.begin(); it != seeds.end(); ++it)
 		{
 			if (ra >= it->_begin && ra < it->_end)
-				return it - seeds.begin();
+				return it->_bind;
 		}
-		return -1;
+		return nullptr;
 	}
 private:
 	time_t _randomSeed;
