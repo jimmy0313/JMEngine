@@ -7,6 +7,8 @@
 #include "boost/shared_ptr.hpp"
 #include "boost/function.hpp"
 
+#include "google/protobuf/message.h"
+
 #include "JME_GLog.h"
 #include "JME_Rpc.h"
 #include "JME_TcpSession.h"
@@ -22,14 +24,16 @@ namespace JMEngine
 		{
 		public:
 			typedef boost::shared_ptr<JME_RpcHandler> JME_RpcHandlerPtr;
-			typedef boost::function<string(const string& params)> RpcHandler;
+
+			//rpc处理函数函数 负责分配 返回Message, rpc服务侧负责释放Message
+			typedef boost::function<google::protobuf::Message*(const string& params)> RpcHandler;
 		public:
 			template<class T>
 			static void bindHandler();
 
 			static JME_RpcHandler::JME_RpcHandlerPtr create();
 			static void regRpcHandler(const char* method, RpcHandler handler);
-			static string execRpcHandler(const string& method, const string& params);
+			static google::protobuf::Message* execRpcHandler(const string& method, const string& params);
 
 		private:
 			static map<string, RpcHandler> _handlers;

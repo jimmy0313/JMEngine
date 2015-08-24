@@ -69,7 +69,18 @@ namespace JMEngine
 		{
 			string param = msg->getMessageStr();
 			JME_Rpc rpc(param);
-			rpc._params = _handler->execRpcHandler(rpc._method, rpc._params);
+
+			auto result = _handler->execRpcHandler(rpc._method, rpc._params);
+			if (nullptr == result)
+			{
+				rpc._params = "";
+			}
+			else
+			{
+				result->SerializeToString(&rpc._params);
+				delete result;
+				result = nullptr;
+			}
 
 			_server->response(session, rpc);
 		}

@@ -21,7 +21,7 @@ namespace JMEngine
 			}
 		}
 
-		string JME_RpcHandler::execRpcHandler( const string& method, const string& params )
+		google::protobuf::Message* JME_RpcHandler::execRpcHandler( const string& method, const string& params )
 		{
 			auto it = _handlers.find(method);
 			if (it == _handlers.end())
@@ -32,7 +32,7 @@ namespace JMEngine
 			{
 				return it->second(params);
 			}
-			return "";
+			return nullptr;
 		}
 
 		JME_RpcHandler::JME_RpcHandlerPtr JME_RpcHandler::create()
