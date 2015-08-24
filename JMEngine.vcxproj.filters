@@ -165,6 +165,9 @@
     <ClInclude Include="include\game\JME_ServerInterface.h">
       <Filter>include\game</Filter>
     </ClInclude>
+    <ClInclude Include="include\game\JME_RPCManager.h">
+      <Filter>include\game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\log\JME_GLog.cpp">
@@ -213,6 +216,9 @@
       <Filter>source\db</Filter>
     </ClCompile>
     <ClCompile Include="source\game\JME_ServerInterface.cpp">
+      <Filter>source\game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\JME_RPCManager.cpp">
       <Filter>source\game</Filter>
     </ClCompile>
   </ItemGroup>

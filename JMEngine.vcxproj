@@ -71,6 +71,7 @@
     <ClInclude Include="include\game\JME_Dispatcher.h" />
     <ClInclude Include="include\game\JME_GameEventCenter.h" />
     <ClInclude Include="include\game\JME_Random.h" />
+    <ClInclude Include="include\game\JME_RPCManager.h" />
     <ClInclude Include="include\game\JME_ServerInterface.h" />
     <ClInclude Include="include\game\JME_Singleton.h" />
     <ClInclude Include="include\json\JME_JsonFile.h" />
@@ -103,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\db\JME_MongoConnection.cpp" />
+    <ClCompile Include="source\game\JME_RPCManager.cpp" />
     <ClCompile Include="source\game\JME_ServerInterface.cpp" />
     <ClCompile Include="source\json\JME_JsonFile.cpp" />
     <ClCompile Include="source\json\src\json_reader.cpp" />
