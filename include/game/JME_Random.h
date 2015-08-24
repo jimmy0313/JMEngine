@@ -17,6 +17,7 @@
 #include "JME_Singleton.h"
 
 #include "boost/random.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #define Rnd Random::getInstance
 
@@ -51,7 +52,10 @@ public:
 
 	int randomInt()
 	{
-		boost::mt19937 gen(time(NULL) + _randomSeed);
+		boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
+		boost::posix_time::time_duration duration( time.time_of_day() );
+
+		boost::mt19937 gen(duration.total_nanoseconds() + _randomSeed);
 		boost::uniform_int<> dist(0, INT_MAX);
 
 		boost::variate_generator<boost::mt19937, boost::uniform_int<> > die(gen, dist);
@@ -62,7 +66,10 @@ public:
 	{
 		assert(start <= end);
 
-		boost::mt19937 gen(time(NULL) + _randomSeed);
+		boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
+		boost::posix_time::time_duration duration( time.time_of_day() );
+
+		boost::mt19937 gen(duration.total_nanoseconds() + _randomSeed);
 		boost::uniform_int<> dist(start, end);
 
 		boost::variate_generator<boost::mt19937, boost::uniform_int<> > die(gen, dist);
