@@ -47,10 +47,11 @@ namespace JMEngine
 			void init_();
 		public:
 
-		protected:
-			Json::Value _config;
 			size_t _serverId;
 			string _serverName;	//服务器名 形如 name + server_id + idx, ps: "game-server-1-01", "chat-server-1"
+
+		protected:
+			Json::Value _config;
 
 			// 主要用于网关服务器， 接受客户端连接
 			JME_TcpAcceptor::JME_TcpAcceptorPtr _acceptorPtr;
