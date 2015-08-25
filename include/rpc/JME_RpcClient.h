@@ -43,8 +43,6 @@ namespace JMEngine
 			static JME_RpcCallback::JME_RpcCallbackPtr create(RpcHandler cb);
 			static JME_RpcCallback::JME_RpcCallbackPtr create(JME_RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId);
 
-		private:
-			static void RpcDeadCallback(JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, RpcDeadHandler dcb);
 		public:
 			RpcHandler _cb;	//回调函数
 			DeadTimePtr _dt;	//超时时间
@@ -58,12 +56,15 @@ namespace JMEngine
 		{
 		public:
 			typedef boost::shared_ptr<JME_RpcClient> JME_RpcClientPtr;
+
+			friend class JME_RpcCallback;
 		public:
 			JME_RpcClient(const string& ip, const string& port, size_t buffSize, size_t reconnect);
 			~JME_RpcClient();
 
 			static JMEngine::rpc::JME_RpcClient::JME_RpcClientPtr create(const string& ip, const string& port, size_t buffSize, size_t reconnect);
-
+			
+			bool callRpcMethod(const char* method, const google::protobuf::Message* params);
 			bool callRpcMethod(const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb);	//返回值为真 表示参数
 			bool callRpcMethod(const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb, size_t dt, JME_RpcCallback::RpcDeadHandler dcb);	//返回值为真 表示参数
 
@@ -73,13 +74,15 @@ namespace JMEngine
 			void sessionReceiveMessage(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, JMEngine::net::JME_MessagePtr msg);
 			void sessionReadError(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
 
-			static void RpcDeadCallback(JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, JME_RpcCallback::RpcDeadHandler dcb);
 		public:
 			void start();
 			void stop();
 
 		protected:
 			void removeDeadRPC(int methodId);
+
+			static void RpcDeadCallback(JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, JME_RpcCallback::RpcDeadHandler dcb);
+
 		private:
 			JMEngine::net::JME_TcpSession::JME_TcpSessionWeakPtr _session;
 

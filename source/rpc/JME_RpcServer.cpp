@@ -26,9 +26,11 @@ namespace JMEngine
 			
 		}
 
-		void JME_RpcServer::response( JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params )
+		void JME_RpcServer::response( JMEngine::net::JME_TcpSessionPtr session, const jme_rpc& params )
 		{
-			auto m(boost::move(params.serializeAsString()));
+			string m;
+			params.SerializeToString(&m);
+
 			JMEngine::net::JME_Message msg(RPCMessage, m);	
 
 			session->writeMessage(msg);
@@ -61,21 +63,22 @@ namespace JMEngine
 		void JME_RpcSessionNetHandler::sessionReceiveMessage( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, JMEngine::net::JME_MessagePtr msg )
 		{
 			string param = msg->getMessageStr();
-			JME_Rpc rpc(param);
+			jme_rpc rpc;
+			rpc.ParseFromString(param);
 
-			auto result = _handler->execRpcHandler(rpc._method, rpc._params);
-			if (nullptr == result)
+			auto result = _handler->execRpcHandler(rpc.method(), rpc.params());
+			if (nullptr != result)
 			{
-				rpc._params = "";
-			}
-			else
-			{
-				result->SerializeToString(&rpc._params);
+				jme_rpc response;
+				response.set_rpc_id(rpc.rpc_id());
+				response.set_method(rpc.method());
+				response.set_params(boost::move(result->SerializeAsString()));
+
 				delete result;
 				result = nullptr;
-			}
 
-			_server->response(session, rpc);
+				_server->response(session, rpc);
+			}
 		}
 
 		void JME_RpcSessionNetHandler::sessionReadError( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )

@@ -95,10 +95,10 @@
     <ClInclude Include="include\net\JME_NetHandler.h" />
     <ClInclude Include="include\net\JME_ReadBuffer.h" />
     <ClInclude Include="include\net\JME_TcpSession.h" />
-    <ClInclude Include="include\rpc\JME_Rpc.h" />
     <ClInclude Include="include\rpc\JME_RpcClient.h" />
     <ClInclude Include="include\rpc\JME_RpcHandler.h" />
     <ClInclude Include="include\rpc\JME_RpcServer.h" />
+    <ClInclude Include="include\rpc\rpc.pb.h" />
     <ClInclude Include="include\util\JME_Encrypt.h" />
     <ClInclude Include="include\util\JME_String.h" />
   </ItemGroup>
@@ -118,6 +118,7 @@
     <ClCompile Include="source\rpc\JME_RpcClient.cpp" />
     <ClCompile Include="source\rpc\JME_RpcHandler.cpp" />
     <ClCompile Include="source\rpc\JME_RpcServer.cpp" />
+    <ClCompile Include="source\rpc\rpc.pb.cc" />
     <ClCompile Include="source\util\JME_Encrypt.cpp" />
     <ClCompile Include="source\util\JME_String.cpp" />
   </ItemGroup>

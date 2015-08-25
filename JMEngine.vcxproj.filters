@@ -135,9 +135,6 @@
     <ClInclude Include="include\rpc\JME_RpcClient.h">
       <Filter>include\rpc</Filter>
     </ClInclude>
-    <ClInclude Include="include\rpc\JME_Rpc.h">
-      <Filter>include\rpc</Filter>
-    </ClInclude>
     <ClInclude Include="include\rpc\JME_RpcServer.h">
       <Filter>include\rpc</Filter>
     </ClInclude>
@@ -167,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="include\game\JME_RPCManager.h">
       <Filter>include\game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rpc\rpc.pb.h">
+      <Filter>include\rpc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="source\game\JME_RPCManager.cpp">
       <Filter>source\game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rpc\rpc.pb.cc">
+      <Filter>source\rpc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,8 @@
 #include "JME_RpcClient.h"
 #include "JME_Message.h"
-#include "JME_Rpc.h"
 #include "JME_Core.h"
+#include "rpc.pb.h"
+
 using namespace JMEngine;
 using namespace JMEngine::net;
 namespace JMEngine
@@ -69,8 +70,12 @@ namespace JMEngine
 			{
 				boost::mutex::scoped_lock lock(_mutex);
 
-				JME_Rpc rpc(++_methodId, method, params);
-				auto m(boost::move(rpc.serializeAsString()));
+				jme_rpc rpc;
+				rpc.set_rpc_id(++_methodId);
+				rpc.set_method(method);
+				rpc.set_params(params->SerializeAsString());
+
+				auto m(boost::move(rpc.SerializeAsString()));
 				JME_Message msg(RPCMessage, m);	
 				_cbs[_methodId] = JME_RpcCallback::create(cb);
 
@@ -95,10 +100,44 @@ namespace JMEngine
 			{
 				boost::mutex::scoped_lock lock(_mutex);
 
-				JME_Rpc rpc(++_methodId, method, params);
-				auto m(boost::move(rpc.serializeAsString()));
+				jme_rpc rpc;
+				rpc.set_rpc_id(++_methodId);
+				rpc.set_method(method);
+				rpc.set_params(params->SerializeAsString());
+
+				auto m(boost::move(rpc.SerializeAsString()));
+
 				JME_Message msg(RPCMessage, m);	
 				_cbs[_methodId] = JME_RpcCallback::create(shared_from_this(), cb, dt, dcb, _methodId);
+
+				return _session.lock()->writeMessage(msg);
+			}
+			catch(std::exception& e)
+			{
+				LogE << "Call rpc function failed, error: " << e.what() << LogEnd;
+			}
+			return false;
+		}
+
+		bool JME_RpcClient::callRpcMethod(const char* method, const google::protobuf::Message* params)
+		{
+			if(!_session.lock()->isOk())
+			{
+				LogE << "Remote server is not connected" << LogEnd;
+				return false;
+			}
+
+			try
+			{
+				boost::mutex::scoped_lock lock(_mutex);
+
+				jme_rpc rpc;
+				rpc.set_rpc_id(++_methodId);
+				rpc.set_method(method);
+				rpc.set_params(params->SerializeAsString());
+
+				auto m(boost::move(rpc.SerializeAsString()));
+				JME_Message msg(RPCMessage, m);	
 
 				return _session.lock()->writeMessage(msg);
 			}
@@ -129,17 +168,18 @@ namespace JMEngine
 		void JME_RpcClient::sessionReceiveMessage( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, JME_MessagePtr msg )
 		{			
 			string m = msg->getMessageStr();
-			JME_Rpc r(m);
+			jme_rpc rpc;
+			rpc.ParseFromString(m);
 
 			boost::mutex::scoped_lock lock(_mutex);
 			
-			auto it = _cbs.find(r._rpcId);
+			auto it = _cbs.find(rpc.rpc_id());
 			if (it != _cbs.end())
 			{
 				if (it->second->_checkDead)
 					it->second->_dt->cancel();
 
-				it->second->_cb(r._params);
+				it->second->_cb(rpc.params());
 
 				_cbs.erase(it);
 			}

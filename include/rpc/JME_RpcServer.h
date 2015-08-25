@@ -12,6 +12,7 @@
 #include "JME_Acceptor.h"
 #include "JME_NetHandler.h"
 #include "JME_TcpSession.h"
+#include "rpc.pb.h"
 
 using namespace std;
 namespace JMEngine
@@ -28,7 +29,7 @@ namespace JMEngine
 
 			static JMEngine::rpc::JME_RpcServer::JME_RpcServerPtr create(JME_RpcHandler::JME_RpcHandlerPtr handler, unsigned short port, size_t bufferSize);
 			
-			void response(JMEngine::net::JME_TcpSessionPtr session, const JME_Rpc& params);
+			void response(JMEngine::net::JME_TcpSessionPtr session, const jme_rpc& params);
 		public:
 			void start();
 			void stop();

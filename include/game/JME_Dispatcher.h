@@ -18,12 +18,12 @@ namespace JMEngine
 {
 	namespace game
 	{
-		template<class T>
+		template<class T1, class T2>
 		class JME_Dispatcher
 		{
 		public:
 			typedef boost::shared_ptr<JME_Dispatcher> JME_DispatcherPtr;
-			typedef boost::function<void(JMEngine::net::JME_TcpSessionPtr session, const T& params)> MessageHandler;
+			typedef boost::function<void(const T1 client/*指定客户端的代表，可以是一个session， 也可以是一个id，或者一个字符串*/, const T2 params)> MessageHandler;
 			typedef map<int, MessageHandler> MessageHandlerMap;
 		public:
 
@@ -60,14 +60,14 @@ namespace JMEngine
 			// Parameter: JMEngine::net::JME_TcpSessionPtr session
 			// Parameter: const T & params
 			//************************************
-			static void execMessageHandler(int msgId, JMEngine::net::JME_TcpSessionPtr session, const T& params);
+			static void execMessageHandler(int msgId, const T1 client, const T2 params);
 
 		private:
 			static MessageHandlerMap _handleMap;
 		};
 
-		template<class T>
-		void JMEngine::game::JME_Dispatcher<T>::regMessageHandler( int beginMsg, int endMsg, MessageHandler handler )
+		template<class T1, class T2>
+		void JMEngine::game::JME_Dispatcher<T1, T2>::regMessageHandler( int beginMsg, int endMsg, MessageHandler handler )
 		{
 			for (int i = beginMsg; i <= endMsg; i++)
 			{
@@ -75,8 +75,8 @@ namespace JMEngine
 			}
 		}
 
-		template<class T>
-		void JMEngine::game::JME_Dispatcher<T>::regMessageHandler( int msgId, MessageHandler handler )
+		template<class T1, class T2>
+		void JMEngine::game::JME_Dispatcher<T1, T2>::regMessageHandler( int msgId, MessageHandler handler )
 		{
 			auto res = _handleMap.insert(make_pair(msgId,handler)); 
 			if(!res.second)
@@ -86,13 +86,13 @@ namespace JMEngine
 			}
 		}
 
-		template<class T>
-		void JMEngine::game::JME_Dispatcher<T>::execMessageHandler( int msgId, JMEngine::net::JME_TcpSessionPtr session, const T& params )
+		template<class T1, class T2>
+		void JMEngine::game::JME_Dispatcher<T1, T2>::execMessageHandler( int msgId, const T1 client, const T2 params )
 		{
 			auto it = _handleMap.find(msgId);
 			if(it != _handleMap.end())
 			{
-				it->second(session, params);
+				it->second(client, params);
 			}
 			else
 			{
@@ -100,8 +100,8 @@ namespace JMEngine
 			}
 		}
 
-		template<class T>
-		typename JME_Dispatcher<T>::MessageHandlerMap JME_Dispatcher<T>::_handleMap;
+		template<class T1, class T2>
+		typename JME_Dispatcher<T1, T2>::MessageHandlerMap JME_Dispatcher<T1, T2>::_handleMap;
 	}
 }
 #endif // JME_Dispatcher_h__

@@ -10,7 +10,6 @@
 #include "google/protobuf/message.h"
 
 #include "JME_GLog.h"
-#include "JME_Rpc.h"
 #include "JME_TcpSession.h"
 using namespace std;
 namespace JMEngine
