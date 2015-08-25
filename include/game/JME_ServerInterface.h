@@ -1,6 +1,8 @@
 #ifndef JME_ServerInterface_h__
 #define JME_ServerInterface_h__
 
+#include "json/json.h"
+
 #include "JME_TcpSession.h"
 #include "JME_NetHandler.h"
 #include "JME_Dispatcher.h"
@@ -9,6 +11,7 @@
 #include "JME_RpcServer.h"
 
 #include "JME_RPCManager.h"
+
 
 using namespace JMEngine;
 using namespace JMEngine::net;

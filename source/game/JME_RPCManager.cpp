@@ -1,4 +1,5 @@
 #include "JME_RPCManager.h"
+#include "json/json.h"
 
 namespace JMEngine
 {
