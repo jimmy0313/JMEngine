@@ -13,6 +13,7 @@ namespace JMEngine
 
 			const auto& _baseConf = _config["base"];
 			_serverId = _baseConf["server_id"].asInt();
+			_serverName = _baseConf["server_name"].asString();
 
 			const auto& rpc = _config["rpc"];
 
@@ -42,6 +43,8 @@ namespace JMEngine
 
 				LogI << "Start accept connector on port{" << port << "}" << LogEnd;
 			}
+
+			LogT << "Server [ " << _serverName << " ] start complete" << LogEnd;
 		}
 
 		void JME_ServerInterface::init()
