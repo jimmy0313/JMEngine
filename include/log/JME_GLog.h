@@ -1,7 +1,7 @@
 #ifndef JME_GLog_h__
 #define JME_GLog_h__
 
-
+#include <list>
 #include <string>
 #include <map>
 #include "JME_GLogLevel.h"
@@ -12,68 +12,31 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/format.hpp>
+#include "boost/thread.hpp"
+#include "boost/asio.hpp"
 
 using namespace std;
 using namespace JMEngine::log;
 
 #define logger JMEngine::log::GLog::getInstance()
-#define GLogger logger.preLog(__FUNCTION__,__LINE__)
 
-#define GLogTrace(color) \
-	logger.trace(color,__FUNCTION__,__LINE__)
+#define LOGE( ...) \
+	logger.log(GLog_ERROR, JMEngine::log::Red, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
-#define GLogDebug(color)  \
-	logger.debug(color,__FUNCTION__,__LINE__)
+#define LOGI(...) \
+	logger.log(GLog_INFO, JMEngine::log::Green, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
-#define GLogInfo(color) \
-	logger.info(color,__FUNCTION__,__LINE__) 
+#define LOGT(...) \
+	logger.log(GLog_TRACE, JMEngine::log::White, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
-#define GLogWarn(color)  \
-	logger.warn(color,__FUNCTION__,__LINE__)
+#define LOGD(...) \
+	logger.log(GLog_DEBUG, JMEngine::log::Yellow, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
-#define GLogError(color) \
-	logger.error(color,__FUNCTION__,__LINE__)
+#define LOGW(...) \
+	logger.log(GLog_WARN, JMEngine::log::Pink, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
-#define GLogFatal(color) \
-	logger.fatal(color,__FUNCTION__,__LINE__)
-
-
-#define SetLogName(n) \
-	logger.setLogName(n)
-
-#define LogT \
-    { logger.lock(); \
-	logger.trace(JMEngine::log::White,__FUNCTION__,__LINE__)
-
-#define LogD  \
-    { logger.lock(); \
-	logger.debug(JMEngine::log::Yellow,__FUNCTION__,__LINE__)
-
-#define LogI \
-    {  logger.lock(); \
-	logger.info(JMEngine::log::Green,__FUNCTION__,__LINE__) 
-
-#define LogW  \
-    {  logger.lock(); \
-	logger.warn(JMEngine::log::Pink,__FUNCTION__,__LINE__)
-
-#define LogE \
-    { logger.lock(); \
-	logger.error(JMEngine::log::Red,__FUNCTION__,__LINE__)
-
-#define LogF \
-    { logger.lock(); \
-	logger.fatal(JMEngine::log::Red,__FUNCTION__,__LINE__)
-
-#define LogEnd \
-	logger.end_line(__FUNCTION__,__LINE__); \
-	logger.unlock();} 
-
-#define color_red(A)	Red		<< A <<  logger.getCurrentColor()
-#define color_pink(A)	Pink	<< A <<  logger.getCurrentColor()
-#define color_green(A)	Green	<< A <<  logger.getCurrentColor()
-#define color_white(A)	White	<< A <<  logger.getCurrentColor()
-#define color_yellow(A)	Yellow	<< A <<  logger.getCurrentColor()
+#define LOGF(...) \
+	logger.log(GLog_WARN, JMEngine::log::Red, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 namespace JMEngine
 {
@@ -84,7 +47,7 @@ namespace JMEngine
 		class GLog
 		{
 		public:
-			GLog(){};
+			GLog();
 			~GLog();
 
 			static std::string getGLogLevelName(GLogLevel enumValue);
@@ -100,94 +63,147 @@ namespace JMEngine
 			void printConfig();//打印配置
 			void setLogName(const char * logName) { serverName = logName;}
 
-			//write log
-			GLog& preLog(GLogLevel level,GLogColor color,const char* functionName,int lineNumber);
-
-			GLog& trace(GLogColor color,const char* functionName,int lineNumber);
-			GLog& debug(GLogColor color,const char* functionName,int lineNumber);
-			GLog& info(GLogColor color,const char* functionName,int lineNumber);
-			GLog& warn(GLogColor color,const char* functionName,int lineNumber);
-			GLog& error(GLogColor color,const char* functionName,int lineNumber);
-			GLog& fatal(GLogColor color,const char* functionName,int lineNumber);
-
-			GLogColor getCurrentColor() {return White;}
-			std::string end_line(const char* functionName,int lineNumber);
 			//设置颜色
 			void setColor(GLogColor color);
 
-			GLog &operator<<(const int& msg);
-			GLog &operator<<(const short& msg);
-			GLog &operator<<(const unsigned int& msg);
-			GLog &operator<<(const unsigned short& msg);
-			GLog &operator<<(const unsigned long& msg);
-			GLog &operator<<(const float& msg);
-			GLog &operator<<(const double& msg);
-			GLog &operator<<(const char& msg);
-			GLog &operator<<(const char* msg);
-			GLog &operator<<(const string& msg);
-			GLog &operator<<(const time_t& msg);
-			GLog &operator<<(const boost::system::error_code& msg);
-			GLog &operator<<(GLogColor color);
+			template<class T1, class... T2>
+			void log(GLogLevel level, GLogColor color, const char* function, int line, const char* log, T1&& t1, T2&&... t2);
 
-			void lock() { _log_mutex.lock();}
-			void unlock() {_log_mutex.unlock();}
-
-			private:
-				static string serverName;
-				static string logPathName;
-				static string lastLogFullFileName;
-				static ofstream logOfstream;
-				static tm lastDateTime;
-				static GLogLevel fileLogLevel;//全局日志级别
-				static GLogLevel screenLogLevel;//屏幕日志打印级别
-				static class_logLevel_map classLogLevelMap;//单个类日志级别配置	
-				static string fileIdx;	//用于按大小进行文件分割
-				static size_t fileSize;	//分割标准
-
-				bool isOutPutFile;
-				bool isOutPutScreen;
-
-				// for supporting multiple threads
-				boost::mutex _log_mutex;
-
-				void readClassLogLevelConfig(std::string cfg);
-
-				void openOrCreateFile(string fileName);
-
-				bool checkAndUpdateLastCreateFileDate();
-
-				void checkLogFile();
-
-				string getCurrentDateTime();
-				std::string getClassString(std::string function_str);
-
-				bool checkToFileLogLevel(GLogLevel level,string& className,bool check_father=false);
-				bool checkToScreenLogLevel(GLogLevel level,string& className,bool check_father=false);
-
-				template <typename F>
-				GLog& logToFile(F f);
-
-				template <typename T>
-				GLog& logToScreen(T t);
-		};
-
-		class GLogTimer
-		{
-		public :
-			GLogTimer(const char * func_name) : _func_name(func_name)
-			{
-				_startTime = boost::get_system_time();
-			}
-			~GLogTimer()
-			{
-				boost::system_time endTime = boost::get_system_time();
-				int elapse = (int)(endTime - _startTime).total_milliseconds();
-				LogI << "process [" << _func_name << "] consume " << elapse << "ms" << LogEnd;
-			}
+			template<class T1>
+			void log(GLogLevel level, GLogColor color, const char* function, int line, T1&& t1);
 		private:
-			std::string _func_name;  // trace function name
-			boost::system_time _startTime;
+
+			template<class T1>
+			void format(boost::format& fmt, T1&& t1);
+
+			template<class T1, class... T2>
+			void format(boost::format& fmt, T1&& t1, T2&&... t2);
+
+			template<class T1, class... T2>
+			string format(const char* fmt, T1&& t1, T2&&... t2);
+
+			void run(boost::shared_ptr<boost::asio::deadline_timer> dt);
+		private:
+			static string serverName;
+			static string logPathName;
+			static string lastLogFullFileName;
+			static ofstream logOfstream;
+			static tm lastDateTime;
+			static GLogLevel fileLogLevel;//全局日志级别
+			static GLogLevel screenLogLevel;//屏幕日志打印级别
+			static class_logLevel_map classLogLevelMap;//单个类日志级别配置	
+			static string fileIdx;	//用于按大小进行文件分割
+			static size_t fileSize;	//分割标准
+
+			bool isOutPutFile;
+			bool isOutPutScreen;
+
+			// for supporting multiple threads
+			boost::mutex _log_mutex;
+
+			void readClassLogLevelConfig(std::string cfg);
+
+			void openOrCreateFile(string fileName);
+
+			bool checkAndUpdateLastCreateFileDate();
+
+			void checkLogFile();
+
+			string getCurrentDateTime();
+
+			bool checkToFileLogLevel(GLogLevel level);
+			bool checkToScreenLogLevel(GLogLevel level);
+
+			list<string>* _waitLogList;
+			list<string>* _writeLogList;
+
+			boost::shared_ptr<boost::asio::io_service> _logIoService;
+			boost::shared_ptr<boost::asio::io_service::work> _logWorker;
+			boost::shared_ptr<boost::thread> _logThread;
 		};
+
+		template<class T1>
+		void JMEngine::log::GLog::log(GLogLevel level, GLogColor color, const char* function, int line, T1&& t1)
+		{
+			try
+			{
+				bool isOutFile = checkToFileLogLevel(level);
+				bool isOutScreen = checkToScreenLogLevel(level);
+
+				if (!isOutFile && isOutScreen)
+					return;
+
+				boost::format fmt("[%s] [%s:%d:%s] [%s] %s\n");
+
+				auto ntm = boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time());
+				auto thread = boost::lexical_cast<string>(boost::this_thread::get_id());
+
+				auto logStr = boost::str(fmt % ntm % function % line % thread % getGLogLevelName(level) % t1);
+
+				if (isOutPutScreen)
+				{
+					_log_mutex.lock();
+					setColor(color);
+					cout << logStr;
+					setColor(GLogColor(White));
+					_log_mutex.unlock();
+				}
+
+				if (isOutFile)
+				{
+					_log_mutex.lock();
+					_waitLogList->emplace_back(logStr);
+					_log_mutex.unlock();
+				}
+			}
+			catch(const std::exception& e)
+			{
+				logger.log(GLog_ERROR, JMEngine::log::Red, function, line, "format log error ==> [ %s ]", e.what());
+			}
+		}
+
+		template<class T1, class... T2>
+		void JMEngine::log::GLog::log(GLogLevel level, GLogColor color, const char* function, int line, const char* log, T1&& t1, T2&&... t2)
+		{
+			try
+			{
+				bool isOutFile = checkToFileLogLevel(level);
+				bool isOutScreen = checkToScreenLogLevel(level);
+
+				if (!isOutFile && isOutScreen)
+					return;
+
+				auto str = format(log, t1, t2...);
+
+				this->log(level, color, function, line, str);
+			}
+			catch(const std::exception& e)
+			{
+				logger.log(GLog_ERROR, JMEngine::log::Red, function, line, "format log error ==> [ %s ]", e.what());
+			}
+		}
+
+		template<class T1, class... T2>
+		void JMEngine::log::GLog::format(boost::format& fmt, T1&& t1, T2&&... t2)
+		{
+			fmt % t1;
+			format(fmt, t2...);
+		}
+
+		template<class T1>
+		void JMEngine::log::GLog::format(boost::format& fmt, T1&& t1)
+		{
+			fmt % t1;
+		}
+
+		template<class T1, class... T2>
+		string JMEngine::log::GLog::format(const char* fmt, T1&& t1, T2&&... t2)
+		{
+			boost::format fmt_(fmt);
+			format(fmt_, t1, t2...);
+
+			return fmt_.str();
+		}
 	}
 }
 

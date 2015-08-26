@@ -45,10 +45,10 @@ namespace JMEngine
 		void IoServiceCore::start()
 		{
 			_netThread->run();
-			LogT << "Create net thread " << _netThread->getThreadId() << LogEnd;
+			LOGT("Create net thread [ %s ]", _netThread->getThreadId());
 
 			_logicThread->run();
-			LogT << "Create logic thread " << _logicThread->getThreadId() << LogEnd;
+			LOGT("Create main logic thread [ %s ]", _netThread->getThreadId());
 		}
 
 		JME_Thread::JME_Thread()

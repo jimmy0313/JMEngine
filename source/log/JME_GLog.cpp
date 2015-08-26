@@ -7,8 +7,7 @@
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include "boost/thread.hpp"
+#include "boost/make_shared.hpp"
 #include <ctime>
 #include "json/json.h"
 #include "json/JME_JsonFile.h"
@@ -217,161 +216,16 @@ namespace JMEngine
 				+boost::lexical_cast<std::string,int> (lastDateTime.tm_mday);
 		}
 
-		GLog& GLog::preLog(GLogLevel level,GLogColor color,const char* functionName,int lineNumber)
+		bool GLog::checkToFileLogLevel(GLogLevel level)
 		{
-			
-			string className = string(functionName);
-			isOutPutFile = checkToFileLogLevel(level,className);
-			isOutPutScreen = checkToScreenLogLevel(level,className);
-
-			boost::posix_time::ptime p = second_clock::local_time();
-			struct tm now_time =boost::posix_time::to_tm(p);
-
-			string this_thread = boost::lexical_cast<string>(boost::this_thread::get_id());
-
-			if ( isOutPutFile )
-			{
-				checkLogFile();
-// 				if ( checkAndUpdateLastCreateFileDate() )
-// 				{
-// 					openOrCreateFile(this->serverName+"-"+getCurrentDateTime()+".log"+"."+fileIdx);
-// 				}
-
-				this->logOfstream << (now_time.tm_hour < 10 ? "0" : "") << now_time.tm_hour << ":" 
-					<< (now_time.tm_min < 10 ? "0" : "") << now_time.tm_min << ":" 
-					<< (now_time.tm_sec < 10 ? "0" : "") << now_time.tm_sec << " "
-					<< "{" << functionName << ":" << lineNumber << ":" << this_thread << "}"
-					<< " ["+getGLogLevelName(level)+"] ";
-			}
-
-			if (isOutPutScreen)
-			{
-				logToScreen(now_time.tm_hour < 10 ? "0" : "").logToScreen(now_time.tm_hour).logToScreen(":");
-				logToScreen(now_time.tm_min < 10 ? "0" : "").logToScreen(now_time.tm_min).logToScreen(":");
-				logToScreen(now_time.tm_sec < 10 ? "0" : "").logToScreen(now_time.tm_sec).logToScreen(" ");
-
-				logToScreen("{").logToScreen(functionName).logToScreen(":").logToScreen(lineNumber).logToScreen(":").logToScreen(this_thread).logToScreen("}");
-
-				logToScreen(" ");
-				setColor(color);
-				logToScreen("["+getGLogLevelName(level)+"]");
-				setColor(GLogColor(White));
-				logToScreen(" ");
-			}
-
-			return getInstance();
+			return fileLogLevel <= level;//日志级别小于全局
 		}
 
-		bool GLog::checkToFileLogLevel(GLogLevel level,string& className,bool check_father)
+		bool GLog::checkToScreenLogLevel(GLogLevel level)
 		{
-			// cancel class log level check
-			/*class_logLevel_map::iterator iter=classLogLevelMap.find(className);
-			if(iter!=classLogLevelMap.end())
-			{
-				if(iter->second<=int(level))
-				{
-					if(check_father)
-					{
-						string cs = getClassString(className);
-						if(cs=="") return true;
-						return checkToFileLogLevel(level,cs,true);
-					}
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			else*/
-			{
-				if(fileLogLevel<=level)//日志级别小于全局
-				{
-					return true;
-					/*string cs = getClassString(className);
-					if(cs=="") return true;
-					return checkToFileLogLevel(level,cs,true);*/
-				}
-				else
-				{
-					return false;
-				}
-			}
+			return screenLogLevel <= level;
 		}
-
-		bool GLog::checkToScreenLogLevel(GLogLevel level,string& className,bool check_father)
-		{
-			// cancel class log level check
-			//class_logLevel_map::iterator iter=classLogLevelMap.find(className);
-			//if(iter!=classLogLevelMap.end())
-			//{
-			//	if(iter->second<=int(level))
-			//	{
-			//		//if(check_father)
-			//		//{
-			//		//	string cs = getClassString(className);
-			//		//	if(cs=="") return true;
-			//		//	return checkToScreenLogLevel(level,cs,true);
-			//		//}
-			//		return true;
-			//	}
-			//	else
-			//	{
-			//		return false;
-			//	}
-			//}
-			//else
-			{
-				if(screenLogLevel<=level)//日志级别小于全局
-				{
-					return true;
-					/*string cs = getClassString(className);
-					if(cs=="") return true;
-					return checkToScreenLogLevel(level,cs,true);*/
-				}
-				else
-				{
-					return false;
-				}
-			}
-		}
-
-		GLog& GLog::trace(GLogColor color,const char* functionName,int lineNumber )
-		{
-			preLog(GLog_TRACE,color,functionName,lineNumber);
-			return getInstance();
-		}
-
-		GLog& GLog::debug(GLogColor color,const char* functionName,int lineNumber )
-		{
-			preLog(GLog_DEBUG,color,functionName,lineNumber);
-			return getInstance();
-		}
-
-		GLog& GLog::info(GLogColor color,const char* functionName,int lineNumber)
-		{
-			preLog(GLog_INFO,color,functionName,lineNumber);
-			return getInstance();
-		}
-
-		GLog& GLog::warn(GLogColor color,const char* functionName,int lineNumber)
-		{
-			preLog(GLog_WARN,color,functionName,lineNumber);
-			return getInstance();
-		}
-
-		GLog& GLog::error(GLogColor color,const char* functionName,int lineNumber)
-		{
-			preLog(GLog_ERROR,color,functionName,lineNumber);
-			return getInstance();
-		}
-
-		GLog& GLog::fatal(GLogColor color,const char* functionName,int lineNumber)
-		{
-			preLog(GLog_FATAL,color,functionName,lineNumber);
-			return getInstance();
-		}
-
+		
 		void GLog::setColor(GLogColor color)
 		{
 			#ifdef WIN32
@@ -383,141 +237,29 @@ namespace JMEngine
 
 		}
 
-		GLog &GLog::operator<<(const int& msg)
+		GLog::GLog()
 		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
+			_waitLogList = new list<string>;
+			_writeLogList = new list<string>;
 
-		GLog &GLog::operator<<(const short& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
+			_logIoService = boost::make_shared<boost::asio::io_service>();
+			_logWorker = boost::make_shared<boost::asio::io_service::work>(*_logIoService);
+			_logThread = boost::make_shared<boost::thread>(boost::bind(&boost::asio::io_service::run, _logIoService));
 
-		GLog &GLog::operator<<(const unsigned int& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		GLog &GLog::operator<<(const unsigned short& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		GLog &GLog::operator<<(const unsigned long& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		GLog &GLog::operator<<(const float& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		GLog &GLog::operator<<(const double& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		GLog &GLog::operator<<(const char& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		GLog &GLog::operator<<(const char* msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		GLog &GLog::operator<<(const string& msg)
-		{
-			logToFile(msg);
-
-			logToScreen(msg);
-
-			if ( msg.size() >= 1 && msg[msg.size()-1] == '\n')
-			{
-				isOutPutScreen=true;
-				isOutPutFile=true;
-
-				setColor(White);
-			}
-
-			return getInstance();
-		}
-
-		GLog &GLog::operator<<(const time_t& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		GLog &GLog::operator<<(const boost::system::error_code& msg)
-		{
-			logToFile(msg);
-			return logToScreen(msg);
-		}
-
-		template <typename F>
-		GLog& GLog::logToFile(F f)
-		{
-			if(isOutPutFile)
-			{
-				this->logOfstream << f;
-				this->logOfstream.flush();
-			}
-
-			return getInstance();
-		}
-
-		template <typename T>
-		GLog& GLog::logToScreen( T t )
-		{
-			if(isOutPutScreen)
-			{
-				cout << t ;
-			}
-			return getInstance();
-		}
-
-		std::string GLog::end_line( const char* functionName,int lineNumber )
-		{
-			return "\n";
-			// don't need name now
-			//std::string str;
-			//str.append("\t[").append(functionName).append("(").append( boost::lexical_cast<std::string,int> (lineNumber)).append(")" ).append("]" ).append( "\n");
-			//return str;
-		}
-
-		GLog & GLog::operator<<( GLogColor color )
-		{
-			setColor(color);
-			return getInstance();
-		}
-
-		std::string GLog::getClassString( std::string function_str )
-		{
-			size_t f = function_str.find_last_of("::");
-			if(f <= function_str.size())
-			{
-				function_str[f-1]=0;
-				std::string class_str = function_str.c_str();
-				return class_str;
-			}
-			return "";
+			auto dt = boost::make_shared<boost::asio::deadline_timer>(*_logIoService);
+			dt->expires_from_now(boost::posix_time::seconds(15));
+			dt->async_wait(boost::bind(&GLog::run, this, dt));
 		}
 
 		GLog::~GLog()
 		{
 			printf("\033[0m");
+
+			_logIoService->stop();
+			_logThread->join();
+
+			delete _waitLogList;
+			delete _writeLogList;
 		}
 
 		void GLog::setLogLevel( GLogLevel level )
@@ -549,6 +291,31 @@ namespace JMEngine
 					return openOrCreateFile(tempName);
 				}
 			}
+		}
+
+		void GLog::run(boost::shared_ptr<boost::asio::deadline_timer> dt)
+		{
+			//交换两个队列
+			_log_mutex.lock();
+			list<string>* list = _waitLogList;
+			_writeLogList = _waitLogList;
+			_waitLogList = list;
+			_log_mutex.unlock();
+
+			if (_writeLogList->empty())
+				return;
+
+			checkLogFile();
+			for (auto& log : *_writeLogList)
+			{
+				logOfstream << log;
+			}
+			logOfstream.flush();
+
+			_writeLogList->clear();
+			
+			dt->expires_from_now(boost::posix_time::seconds(15));
+			dt->async_wait(boost::bind(&GLog::run, this, dt));
 		}
 
 	}

@@ -12,12 +12,12 @@ namespace JMEngine
 			auto res = _handlers.insert(make_pair(method,handler)); 
 			if(!res.second)
 			{
-				LogE << "Method [ " << method << " ] had been registered" << LogEnd;
+				LOGE("Method [ %s ] had been registered", method);
 				abort();
 			}
 			else
 			{
-				LogI << "Register method [ " << method << " ] succeed" << LogEnd;
+				LOGT("Register method [ %s ] succeed", method);
 			}
 		}
 
@@ -26,7 +26,7 @@ namespace JMEngine
 			auto it = _handlers.find(method);
 			if (it == _handlers.end())
 			{
-				LogE << "Can't find handler for method " << method << LogEnd;
+				LOGE("Can't find handler for method [ %s ]", method);
 			}
 			else
 			{

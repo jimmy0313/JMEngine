@@ -62,7 +62,7 @@ namespace JMEngine
 		{
 			if(!_session.lock()->isOk())
 			{
-				LogE << "Remote server is not connected" << LogEnd;
+				LOGE("Remote server is not connected");
 				return false;
 			}
 
@@ -83,7 +83,7 @@ namespace JMEngine
 			}
 			catch(std::exception& e)
 			{
-				LogE << "Call rpc function failed, error: " << e.what() << LogEnd;
+				LOGE("Call rpc function failed, error ==> [ %s ]", e.what());
 			}
 			return false;
 		}
@@ -92,7 +92,7 @@ namespace JMEngine
 		{
 			if(!_session.lock()->isOk())
 			{
-				LogE << "Remote server is not connected" << LogEnd;
+				LOGE("Remote server is not connected");
 				return false;
 			}
 
@@ -114,7 +114,7 @@ namespace JMEngine
 			}
 			catch(std::exception& e)
 			{
-				LogE << "Call rpc function failed, error: " << e.what() << LogEnd;
+				LOGE("Call rpc function failed, error ==> [ %s ]", e.what());
 			}
 			return false;
 		}
@@ -123,7 +123,7 @@ namespace JMEngine
 		{
 			if(!_session.lock()->isOk())
 			{
-				LogE << "Remote server is not connected" << LogEnd;
+				LOGE("Remote server is not connected");
 				return false;
 			}
 
@@ -143,7 +143,7 @@ namespace JMEngine
 			}
 			catch(std::exception& e)
 			{
-				LogE << "Call rpc function failed, error: " << e.what() << LogEnd;
+				LOGE("Call rpc function failed, error ==> [ %s ]", e.what());
 			}
 			return false;
 		}
@@ -152,12 +152,12 @@ namespace JMEngine
 		{
 			session->start(RPCSession);
 
-			LogT << "RPC server{" << session->getIp() << ":" << session->getPort() << "}" << " connect succeed" << LogEnd;
+			LOGI("Connect to rpc server [ %s:%s ] succeed", session->getIp(), session->getPort());
 		}
 
 		void JME_RpcClient::sessionConnectFailed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
 		{
-			LogW << "Connect to RPC server {" << session->getIp() << ":" << session->getPort() << "} failed. error: " << e.message() << LogEnd;
+			LOGW("Connect to rpc server [ %s:%s ] failed, error ==> [ %d:%s ]", session->getIp(), session->getPort(), e.value(), e.message());
 		}
 
 		void JME_RpcClient::sessionDisconnect( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )

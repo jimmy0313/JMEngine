@@ -75,7 +75,7 @@ namespace JMEngine
 #ifdef BUFFER_WAINING
 				if (_buffOffest - _buffer < _buffSize / 10 * 9)
 					return;
-				LogW << "Buffer will be empty" << LogEnd;
+				LOGE("Buffer will be empty");
 #endif // BUFFER_WAINING
 			}
 
@@ -90,7 +90,7 @@ namespace JMEngine
 					_buffOffest = _buffer + blen;
 					memset(_buffOffest, 0, _buffSize - blen);
 
-					LogT << "move buffer size " << blen << LogEnd; 
+					LOGT("move buffer size %d", blen);
 				}
 			}
 

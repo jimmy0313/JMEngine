@@ -21,8 +21,8 @@ namespace JMEngine
 			}
 			catch(boost::system::system_error e)
 			{
-				LogE <<  e.what() << e.code() << LogEnd;
-			}	
+				LOGE("Start session work failed, error ==> [ %d:%s ]", e.code(), e.what());
+			}
 		}
 
 		// read message from socket 
@@ -66,8 +66,6 @@ namespace JMEngine
 
 							JMECore.getLogicioService().post(
 								boost::bind(&JME_NetHandler::sessionReceiveMessage, _netHandlerPtr, shared_from_this(), JME_Message::create(data_ptr, l)));
-
-// 							_netHandlerPtr->sessionReceiveMessage(shared_from_this(), JME_Message::create(data_ptr, len));
 						}
 					}
 				}
@@ -75,7 +73,7 @@ namespace JMEngine
 				{
 					_status = Disconnected;
 
-					LogE <<  e.message() << LogEnd;
+					LOGE("Try to read error ==> [ %d:%s ]", e.value(), e.message());
 
 					JMECore.getLogicioService().post(
 						boost::bind(&JME_NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
@@ -100,7 +98,7 @@ namespace JMEngine
 				}
 				catch (std::exception& e)
 				{
-					LogE << e.what() << LogEnd;
+					LOGE("Try to sleep error ==> [ %s ]", e.what());
 				}
 			}
 			else
@@ -154,8 +152,7 @@ namespace JMEngine
 					}
 					catch (std::exception& e)
 					{
-						LogE <<  e.what() << LogEnd;
-						LogE <<  "************ socket operation error in handle_write function \t ***********" << LogEnd;
+						LOGE("Try to write error ==> [ %s ]", e.what());
 					}
 				}
 			}
@@ -175,7 +172,7 @@ namespace JMEngine
 				}
 				catch (std::exception& e)
 				{
-					LogE << e.what() << LogEnd;
+					LOGE("Try to write error ==> [ %s ]", e.what());
 				}
 			}
 			else
@@ -187,7 +184,6 @@ namespace JMEngine
 		{
 			if (!isOk())
 			{
-				LogE << "socket not connected, can't send data net_id : " << _net_id << LogEnd;
 				return false;
 			}
 
@@ -201,7 +197,7 @@ namespace JMEngine
 				}
 				catch (std::exception& e)
 				{
-					LogE << e.what() << LogEnd;
+					LOGE("Try to write error ==> [ %s ]", e.what());
 				}
 				return false;
 			}
@@ -213,7 +209,7 @@ namespace JMEngine
 				return true;
 			}
 
-			LogE << "Write data buffer is null!!!" << LogEnd;
+			LOGE("Write buffer is null");
 
 			return false;
 		}
@@ -226,16 +222,10 @@ namespace JMEngine
 		void JME_TcpSession::writeLock(const char* data_ptr,int len)
 		{
 			if (!isOk())
-			{
-				LogE << "socket not connected, can't send data, net_id : " << _net_id << LogEnd;
 				return;
-			}
 
 			if(!_socket.is_open())
-			{
-				LogE <<  "Writing socket has been closed net id:" << _net_id  << LogEnd;
 				return;
-			}
 
 			boost::mutex::scoped_lock lock(_writeMutex);
 			writeImpl(data_ptr,len);
@@ -244,16 +234,11 @@ namespace JMEngine
 		void JME_TcpSession::writeNolock(const char* data_ptr,int len)
 		{
 			if (!isOk())
-			{
-				LogE << "socket not connected, can't send data, net_id : " << _net_id << LogEnd;
 				return;
-			}
 
 			if(!_socket.is_open())
-			{
-				LogE <<  "Writing socket has been closed net id:" << _net_id  << LogEnd;
 				return;
-			}
+
 			writeImpl(data_ptr,len);
 		}
 
@@ -277,7 +262,7 @@ namespace JMEngine
 			}
 			catch (std::exception& e)
 			{
-				LogE << e.what() << LogEnd;
+				LOGE("Try to write error ==> [ %s ]", e.what());
 			}
 		}
 
@@ -328,7 +313,7 @@ namespace JMEngine
 			}
 			catch(boost::system::system_error e)
 			{
-				LogE <<  e.what() << e.code() << LogEnd;
+				LOGE("Try to clost socket error ==> [ %d:%s ]", e.code().value(), e.what());
 			}
 			_writeBuffer = 0;
 			_writeBufferOffest = 0;
@@ -353,7 +338,7 @@ namespace JMEngine
 				// so we don't need to record this kind of error message
 				if ( e.code().value() != 107 )
 				{
-					LogE <<  e.what() << " : " << e.code() << LogEnd;
+					LOGE("Try to clost socket error ==> [ %d:%s ]", e.code().value(), e.what());
 				}
 			}
 
@@ -434,7 +419,6 @@ namespace JMEngine
 			{
 				_status = Connected;
 
-				LogT << "Connect to " << _ip << ":" << _port << " succeed" << LogEnd;
 				JMECore.getLogicioService().post(
 					boost::bind(&JME_NetHandler::sessionConnectSucceed, _netHandlerPtr, shared_from_this()));
 			}

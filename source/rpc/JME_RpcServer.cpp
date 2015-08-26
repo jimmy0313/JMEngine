@@ -18,7 +18,7 @@ namespace JMEngine
 		{
 			_acceptorPtr = JMEngine::net::JME_TcpAcceptor::create(JME_RpcSessionNetHandler::create(this, handler), port);
  			_acceptorPtr->accept(0, bufferSize);
-			LogT << "Listen on port {" << port << "} for rpc service" << LogEnd;
+			LOGT("Listen on port [ %d ] for rpc service", port);
 		}
 
 		JME_RpcServer::~JME_RpcServer()
@@ -47,7 +47,7 @@ namespace JMEngine
 		{
 			session->start(RPCSession);
 
-			LogT << "New rpc client connected from " << session->getIp() << "{" << session->getPort() << "}" << LogEnd;
+			LOGT("New rpc client connected from [ %s:%s ]", session->getIp(), session->getPort());
 		}
 
 		void JME_RpcSessionNetHandler::sessionConnectFailed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
@@ -87,11 +87,11 @@ namespace JMEngine
 			{
 				session->stop();
 
-				LogT << "Rpc client connected from " << session->getIp() << "{" << session->getPort() << "} disconnect" << LogEnd;
+				LOGT("Rpc client from [ %s:%s ] disconnected", session->getIp(), session->getPort());
 			}
 			catch(boost::system::system_error e)
 			{
-				LogE <<  e.what() << "{" << e.code() << "}" << LogEnd;
+				LOGE("error ==> [ %d:%s ]", e.code().value(), e.what());
 			}
 		}
 

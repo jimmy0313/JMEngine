@@ -131,7 +131,7 @@ namespace JMEngine
 			Json::Reader reader;
 			if(!reader.parse(str, val))
 			{
-				LogE << reader.getFormatedErrorMessages() << LogEnd;
+				LOGE(reader.getFormatedErrorMessages());
 				return Json::Value::null;
 			}
 			return val;
