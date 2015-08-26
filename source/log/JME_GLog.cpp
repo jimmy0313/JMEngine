@@ -297,7 +297,7 @@ namespace JMEngine
 		{
 			//交换两个队列
 			_log_mutex.lock();
-			list<string>* list = _waitLogList;
+			list<string>* list = _writeLogList;
 			_writeLogList = _waitLogList;
 			_waitLogList = list;
 			_log_mutex.unlock();
