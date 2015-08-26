@@ -97,7 +97,7 @@ namespace JMEngine
 			{
 				if (!n)
 				{
-					LogE << "DB pool num can't be 0" << LogEnd;
+					LOGE("DB pool num must > 0");
 					abort();
 				}
 				//初始化连接池
@@ -109,7 +109,7 @@ namespace JMEngine
 						_connPool.push_back(conn);
 					}
 				}
-				LogT << "Init " << _connPool.size() << " db connector complete" << LogEnd;
+				LOGT("Init %d db connector complete", _connPool.size());
 			}
 		private:
 			// 获取真实连接对象，仅允许连接类访问
