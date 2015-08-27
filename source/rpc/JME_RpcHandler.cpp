@@ -17,7 +17,7 @@ namespace JMEngine
 			}
 			else
 			{
-				LOGT("Register method [ %s ] succeed", method);
+				LOGI("Register method [ %s ] succeed", method);
 			}
 		}
 

@@ -18,7 +18,7 @@ namespace JMEngine
 		{
 			_acceptorPtr = JMEngine::net::JME_TcpAcceptor::create(JME_RpcSessionNetHandler::create(this, handler), port);
  			_acceptorPtr->accept(0, bufferSize);
-			LOGT("Listen on port [ %d ] for rpc service", port);
+			LOGI("Listen on port [ %d ] for rpc service", port);
 		}
 
 		JME_RpcServer::~JME_RpcServer()
@@ -87,7 +87,7 @@ namespace JMEngine
 			{
 				session->stop();
 
-				LOGT("Rpc client from [ %s:%s ] disconnected", session->getIp(), session->getPort());
+				LOGW("Rpc client from [ %s:%s ] disconnected", session->getIp(), session->getPort());
 			}
 			catch(boost::system::system_error e)
 			{

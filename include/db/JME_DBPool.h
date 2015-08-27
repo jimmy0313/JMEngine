@@ -109,7 +109,7 @@ namespace JMEngine
 						_connPool.push_back(conn);
 					}
 				}
-				LOGT("Init %d db connector complete", _connPool.size());
+				LOGI("Init %d db connector complete", _connPool.size());
 			}
 		private:
 			// 获取真实连接对象，仅允许连接类访问
