@@ -57,6 +57,13 @@ namespace JMEngine
 				_totalLen = msgStr.size() + MessageHeaderLength;
 				_msgData = msgStr.data();
 			}
+			JME_Message(short msgId, int netId, const string& msgStr):
+				MessageHeader(msgId)
+			{
+				_netId = netId;
+				_totalLen = msgStr.size() + MessageHeaderLength;
+				_msgData = msgStr.data();
+			}
 			JME_Message(const char* data_ptr)
 			{
 				memcpy(this, data_ptr, MessageHeaderLength);
