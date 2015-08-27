@@ -32,16 +32,11 @@ namespace hoyosvr
 
 			size_t s_in_len = inlen;
 			size_t s_out_len = outlen;
-			LogE << "***********in len : " << inlen << LogEnd ;
-			LogE << "***********out len : " << outlen << LogEnd;
 
 			if (iconv(cd,pin,&s_in_len,pout,&s_out_len)==-1) 
 				return -1;
-			LogE << "***********out len 2 : " << s_out_len << LogEnd;
-
 
 			iconv_close(cd);
-
 			return 0;
 		}
 #endif
