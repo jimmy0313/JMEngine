@@ -21,22 +21,22 @@ using namespace JMEngine::log;
 #define logger JMEngine::log::GLog::getInstance()
 
 #define LOGE( ...) \
-	logger.log(GLog_ERROR, JMEngine::log::Red, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+	logger.log(GLog_ERROR, JMEngine::log::Red, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 #define LOGI(...) \
-	logger.log(GLog_INFO, JMEngine::log::Green, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+	logger.log(GLog_INFO, JMEngine::log::Green, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 #define LOGT(...) \
-	logger.log(GLog_TRACE, JMEngine::log::White, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+	logger.log(GLog_TRACE, JMEngine::log::White, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 #define LOGD(...) \
-	logger.log(GLog_DEBUG, JMEngine::log::Yellow, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+	logger.log(GLog_DEBUG, JMEngine::log::Yellow, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 #define LOGW(...) \
-	logger.log(GLog_WARN, JMEngine::log::Pink, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+	logger.log(GLog_WARN, JMEngine::log::Pink, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 #define LOGF(...) \
-	logger.log(GLog_WARN, JMEngine::log::Red, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+	logger.log(GLog_WARN, JMEngine::log::Red, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 namespace JMEngine
 {
@@ -67,10 +67,10 @@ namespace JMEngine
 			void setColor(GLogColor color);
 
 			template<class T1, class... T2>
-			void log(GLogLevel level, GLogColor color, const char* function, int line, const char* log, T1&& t1, T2&&... t2);
+			void log(GLogLevel level, GLogColor color, const char* file, const char* function, int line, const char* log, T1&& t1, T2&&... t2);
 
 			template<class T1>
-			void log(GLogLevel level, GLogColor color, const char* function, int line, T1&& t1);
+			void log(GLogLevel level, GLogColor color, const char* file, const char* function, int line, T1&& t1);
 		private:
 
 			template<class T1>
@@ -123,7 +123,7 @@ namespace JMEngine
 		};
 
 		template<class T1>
-		void JMEngine::log::GLog::log(GLogLevel level, GLogColor color, const char* function, int line, T1&& t1)
+		void JMEngine::log::GLog::log(GLogLevel level, GLogColor color, const char* file, const char* function, int line, T1&& t1)
 		{
 			try
 			{
@@ -133,12 +133,12 @@ namespace JMEngine
 				if (!isOutFile && isOutScreen)
 					return;
 
-				boost::format fmt("[%s] [%s:%d:%s] [%s] %s\n");
+				boost::format fmt("[%s] [%s:%d:%s:%s] [%s] %s\n");
 
 				auto ntm = boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time());
 				auto thread = boost::lexical_cast<string>(boost::this_thread::get_id());
 
-				auto logStr = boost::str(fmt % ntm % function % line % thread % getGLogLevelName(level) % t1);
+				auto logStr = boost::str(fmt % ntm % file % line % function % thread % getGLogLevelName(level) % t1);
 
 				if (isOutPutScreen)
 				{
@@ -158,12 +158,12 @@ namespace JMEngine
 			}
 			catch(const std::exception& e)
 			{
-				logger.log(GLog_ERROR, JMEngine::log::Red, function, line, "format log error ==> [ %s ]", e.what());
+				logger.log(GLog_ERROR, JMEngine::log::Red, file, function, line, "format log error ==> [ %s ]", e.what());
 			}
 		}
 
 		template<class T1, class... T2>
-		void JMEngine::log::GLog::log(GLogLevel level, GLogColor color, const char* function, int line, const char* log, T1&& t1, T2&&... t2)
+		void JMEngine::log::GLog::log(GLogLevel level, GLogColor color, const char* file, const char* function, int line, const char* log, T1&& t1, T2&&... t2)
 		{
 			try
 			{
@@ -175,11 +175,11 @@ namespace JMEngine
 
 				auto str = format(log, t1, t2...);
 
-				this->log(level, color, function, line, str);
+				this->log(level, color, file, function, line, str);
 			}
 			catch(const std::exception& e)
 			{
-				logger.log(GLog_ERROR, JMEngine::log::Red, function, line, "format log error ==> [ %s ]", e.what());
+				logger.log(GLog_ERROR, JMEngine::log::Red, file, function, line, "format log error ==> [ %s ]", e.what());
 			}
 		}
 
