@@ -48,7 +48,7 @@ namespace JMEngine
 			LOGT("Create net thread [ %s ]", _netThread->getThreadId());
 
 			_logicThread->run();
-			LOGT("Create main logic thread [ %s ]", _netThread->getThreadId());
+			LOGT("Create main logic thread [ %s ]", _logicThread->getThreadId());
 		}
 
 		JME_Thread::JME_Thread()
