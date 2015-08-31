@@ -194,11 +194,8 @@ namespace JMEngine
 
 		string GLog::getCurrentDateTime()
 		{
-			return boost::lexical_cast<std::string,int> (lastDateTime.tm_year+1900)+"-"
-				+(lastDateTime.tm_mon+1<=9?"0":"")
-				+boost::lexical_cast<std::string,int> (lastDateTime.tm_mon+1)+"-"
-				+(lastDateTime.tm_mday<=9?"0":"")
-				+boost::lexical_cast<std::string,int> (lastDateTime.tm_mday);
+			boost::format fmt("%d%02d%02d");
+			return (fmt % (lastDateTime.tm_year + 1900) % (lastDateTime.tm_mon + 1) % lastDateTime.tm_mday).str();
 		}
 
 		bool GLog::checkToFileLogLevel(GLogLevel level)
