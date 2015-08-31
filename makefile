@@ -8,15 +8,17 @@
                             CPP_CFLAGS = -static
                                   MAKE = make
                                 LINKER = g++
-                          INCLUDE_DIRS = -I/usr/include -I./include -I/boost_1_49_0 -I./include/json/ -I./include/net -I./include/google \
-					 -I./include/log -I./include/memory -I./include/rpc -I./include/server -I./include/util
+                          INCLUDE_DIRS = -I../third_party/google \
+					 -I./include -I./include/json/ -I./include/net \
+					 -I./include/log -I./include/memory -I./include/rpc -I./include/game -I./include/util \
+					 -I/usr/include -I/boost_1_49_0 
 
                                   LIBS = -lboost_filesystem -lboost_system -lboost_thread -lboost_date_time -lprotobuf
                             OPTIM_FLAG = 
                                    CPP = g++ -std=c++11
                                 LFLAGS = 
                               LIB_DIRS = -L/usr/local/lib/
-                                 VPATH = ./source ./source/json ./source/json/src ./source/log ./source/memory ./source/net ./source/rpc ./source/server ./source/util
+                                 VPATH = ./source ./source/json ./source/json/src ./source/log ./source/memory ./source/net ./source/rpc ./source/util
                             OBJECT_DIR = ./.obj/
                               CPPFILES = \
 					 JME_GLog.cpp \
@@ -31,13 +33,14 @@
 					 JME_RpcClient.cpp \
 					 JME_RpcHandler.cpp \
 					 JME_RpcServer.cpp \
-					 JME_ConnectorServer.cpp \
-					 JME_ServerInterface.cpp \
 					 JME_Encrypt.cpp \
 					 JME_String.cpp
 
 
                                 CFILES =  
+
+                                CCFILES = \
+                                         rpc.pb.cc
 
 # To use 'make debug=0' build release edition.
 ifdef debug
@@ -71,6 +74,7 @@ endif
 
 OBJECTS := $(addprefix $(OBJECT_DIR), $(notdir $(CPPFILES:%.cpp=%.o)))
 OBJECTS += $(addprefix $(OBJECT_DIR), $(notdir $(CFILES:%.c=%.o)))
+OBJECTS += $(addprefix $(OBJECT_DIR), $(notdir $(CCFILES:%.cc=%.o)))
 
 CALL_CFLAGS := $(C_CFLAGS) $(INCLUDE_DIRS) $(MACROS) $(OPTIM_FLAG)
 CPPALL_CFLAGS := $(CPP_CFLAGS) $(INCLUDE_DIRS) $(MACROS) $(OPTIM_FLAG)
@@ -86,6 +90,9 @@ $(OBJECT_DIR)%.o:%.cpp
 
 $(OBJECT_DIR)%.o:%.c
 	$(Q)$(CC) $(strip $(CALL_CFLAGS)) -c $< -o $@
+
+$(OBJECT_DIR)%.o:%.cc
+	$(Q)$(CPP) $(strip $(CPPALL_CFLAGS)) -c $< -o $@
 
 checkdir:
 	@if ! [ -d "$(BIN_DIR)" ]; then \
