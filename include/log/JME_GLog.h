@@ -41,9 +41,7 @@ using namespace JMEngine::log;
 namespace JMEngine
 {
 	namespace log
-	{
-		typedef std::map<string,int> class_logLevel_map;
-		
+	{		
 		class GLog
 		{
 		public:
@@ -91,8 +89,7 @@ namespace JMEngine
 			static tm lastDateTime;
 			static GLogLevel fileLogLevel;//全局日志级别
 			static GLogLevel screenLogLevel;//屏幕日志打印级别
-			static class_logLevel_map classLogLevelMap;//单个类日志级别配置	
-			static string fileIdx;	//用于按大小进行文件分割
+			static int fileIdx;	//用于按大小进行文件分割
 			static size_t fileSize;	//分割标准
 
 			bool isOutPutFile;

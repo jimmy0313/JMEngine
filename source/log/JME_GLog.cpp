@@ -25,15 +25,14 @@ namespace JMEngine
 	namespace log
 	{
 		static GLog* m_pInstance = NULL;
-		string GLog::serverName="server";
+		string GLog::serverName="log";
 		string GLog::logPathName="./log/";
 		string GLog::lastLogFullFileName="";
 		ofstream GLog::logOfstream;
 		tm GLog::lastDateTime;
 		GLogLevel GLog::fileLogLevel=GLog_TRACE;
 		GLogLevel GLog::screenLogLevel=GLog_TRACE;
-		class_logLevel_map GLog::classLogLevelMap;
-		string GLog::fileIdx="1";
+		int GLog::fileIdx=1;
 		size_t GLog::fileSize=0;
 
 		GLog& GLog::getInstance()
@@ -58,15 +57,6 @@ namespace JMEngine
 			logPathName=logConfig_Value["logPathName"].asString();
 			fileSize=logConfig_Value["splitSize"].asUInt() * 1024;
 
-			classLogLevelMap.clear();
-
-			Json::Value classLevel_Value =logConfig_Value["classLogLevelMap"];
- 			for(Json::Value::iterator it=classLevel_Value.begin();it!=classLevel_Value.end();++it)
- 			{
-				Json::Value& keyValueIt = *it;
-				classLogLevelMap[it.key().asString()]=keyValueIt.asInt();
-			}
-
 			if(boost::filesystem::is_directory(logPathName)==false)
 			{
 				boost::filesystem::create_directory(logPathName);
@@ -77,6 +67,7 @@ namespace JMEngine
 		void GLog::readConfig(std::string cfg)
 		{
 			readClassLogLevelConfig(cfg);
+			printConfig();
 		}
 
 		void GLog::printConfig()
@@ -87,15 +78,6 @@ namespace JMEngine
 			cout << "Log screen level: " << getGLogLevelName(screenLogLevel) <<endl;
 			cout << "Log name:         " << serverName <<endl;
 			cout << "Log file dir:	   " << logPathName <<endl;
-			cout << "" <<endl;
-			cout << "Class log level map size : " << classLogLevelMap.size() << endl;
-			class_logLevel_map::iterator it;
-			cout << "====================================================" << endl;
-			for(it=classLogLevelMap.begin();it!=classLogLevelMap.end();it++)
-			{
-				//命名空间/类名
-				cout << "Function name:" << it->first << " value:" << getGLogLevelName(getGLogLevelByValue(it->second)) << endl;
-			}
 			cout << "====================================================" << endl;
 		}
 
@@ -186,8 +168,11 @@ namespace JMEngine
 			}
 		}
 
-		bool GLog:: checkAndUpdateLastCreateFileDate()
+		bool GLog::checkAndUpdateLastCreateFileDate()
 		{
+			if(boost::filesystem::is_directory(logPathName)==false)
+				boost::filesystem::create_directory(logPathName);
+
 			boost::posix_time::ptime p = second_clock::local_time();
 			struct tm now=boost::posix_time::to_tm(p);
 			
@@ -197,7 +182,7 @@ namespace JMEngine
 				)
 			{
 				lastDateTime = now;
-				fileIdx = "1";
+				fileIdx = 1;
 				return true;
 			}
 			else
@@ -275,7 +260,9 @@ namespace JMEngine
 		void GLog::checkLogFile()
 		{
 			checkAndUpdateLastCreateFileDate();
-			string tempName = this->logPathName + this->serverName + "-" + getCurrentDateTime() + ".log" + "." + this->fileIdx;
+			boost::format fmt("%s%s.%s.log.%d");
+
+			string tempName = (fmt % this->logPathName % this->serverName % getCurrentDateTime() % fileIdx).str();
 
 			while (1)
 			{
@@ -283,8 +270,7 @@ namespace JMEngine
 				int result = stat(tempName.c_str(), &fno);
 				if (0 == result && fno.st_size >= fileSize && fileSize != 0)
 				{
-					fileIdx = boost::lexical_cast<string>(boost::lexical_cast<int>(fileIdx) + 1);
-					tempName = this->logPathName + this->serverName + "-" + getCurrentDateTime() + ".log" + "." + this->fileIdx;
+					tempName = (fmt % this->logPathName % this->serverName % getCurrentDateTime() % ++fileIdx).str();
 				}
 				else
 				{
@@ -296,14 +282,16 @@ namespace JMEngine
 		void GLog::run(boost::shared_ptr<boost::asio::deadline_timer> dt)
 		{
 			//交换两个队列
-			_log_mutex.lock();
-			list<string>* list = _writeLogList;
-			_writeLogList = _waitLogList;
-			_waitLogList = list;
-			_log_mutex.unlock();
+			{
+				//如果没有等待写入文件的日志
+				boost::mutex::scoped_lock l(_log_mutex);
+				if (_waitLogList->empty())
+					return;
 
-			if (_writeLogList->empty())
-				return;
+				list<string>* list = _writeLogList;
+				_writeLogList = _waitLogList;
+				_waitLogList = list;
+			}
 
 			checkLogFile();
 			for (auto& log : *_writeLogList)
