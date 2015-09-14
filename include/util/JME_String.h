@@ -8,7 +8,7 @@
 using namespace std;
 using namespace boost;
 
-namespace hoyosvr
+namespace JMEngine
 {
 	namespace tools
 	{
@@ -22,6 +22,9 @@ namespace hoyosvr
 		void UTF_8ToUnicode(wchar_t* pOut,char *pText);
 
 		void split(const string& str, vector<string>& strVec, const char sign = '|');
+
+		int stringLength(const string& inStr);
+		int stringLength(const char* str, int len);
 	}
 }
 #endif // JME_String_h__

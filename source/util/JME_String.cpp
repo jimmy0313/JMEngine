@@ -11,7 +11,7 @@
 #include <iconv.h>
 #endif // LINUX
 
-namespace hoyosvr
+namespace JMEngine
 {
 	namespace tools
 	{
@@ -173,5 +173,69 @@ namespace hoyosvr
 		{
 			boost::split( strVec, str, boost::is_any_of( "|" ), boost::token_compress_on );
 		}
+
+		int stringLength(const string& inStr)
+		{
+			return stringLength(inStr.c_str(), inStr.length());
+		}
+
+		int stringLength(const char* str, int len)
+		{
+			const char * pChar = str;
+
+			int nlen = 0;
+
+			int value = (int)(*pChar);
+			while ( pChar < str + len )
+			{
+				value = value & 0xff;
+				if ( value <= 0xfd && value >= 0xc0 )
+				{
+					if ( (value & 0xe0 ) == 0xe0 ) 
+					{
+						pChar += 3; 
+						nlen++;
+					}
+					else if ( (value & 0xc0 ) == 0xc0 ) 
+					{
+						pChar += 2;
+						nlen++;
+					}
+				}
+				else 
+				{
+
+					if(value >= 0xa1 && value <= 0xa9)
+					{
+						int value2 = (int)(*(pChar + 1));
+						value2 = value2 & 0xff;
+						if (value2 > 0xa1 && value2 <= 0xef)
+						{
+							pChar += 2;
+							value = (int)(*pChar);
+							nlen++;
+							continue;
+						}
+					}
+					if(value >= 0xb0 && value <= 0xf7)
+					{
+						int value2 = (int)(*(pChar + 1));
+						value2 = value2 & 0xff;
+						if (value2 > 0xa0 && value2 < 0xff)
+						{
+							pChar += 2;
+							value = (int)(*pChar);
+							nlen++;
+							continue;
+						}
+					}
+					pChar++;
+					nlen++;
+				}
+				value = (int)(*pChar);
+			}
+			return nlen;
+		}
+
 	}  
 }
