@@ -16,6 +16,7 @@
 #include "boost/thread/mutex.hpp"
 #include "boost/function.hpp"
 #include <deque>
+#include <string>
 #include "JME_GLog.h"
 
 using namespace std;
@@ -23,6 +24,22 @@ namespace JMEngine
 {
 	namespace db
 	{
+		class JME_DBException
+		{
+		public:
+			explicit JME_DBException(const string& err):
+				_err(err)
+			{
+			}
+			explicit JME_DBException(const char* err):
+				_err(err)
+			{
+			}
+
+			const string& what() const { return _err; }
+		public:
+			string _err;
+		};
 		template<class T> class DBPool;
 
 		// 代理类，指向一个个连接池，通过此类获取单个连接
@@ -46,7 +63,7 @@ namespace JMEngine
 				_delegator = (DBPool<T>*)delegtor;
 				_conn = _delegator->getConn();	// 获取连接
 				if (nullptr == _conn)
-					throw "Try to get db connector failed !!!";
+					throw JME_DBException("Try to get db connector failed !!!");
 			}
 
 			~DBHelper()
