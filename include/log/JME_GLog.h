@@ -127,7 +127,7 @@ namespace JMEngine
 				bool isOutFile = checkToFileLogLevel(level);
 				bool isOutScreen = checkToScreenLogLevel(level);
 
-				if (!isOutFile && isOutScreen)
+				if (!isOutFile && !isOutScreen)
 					return;
 
 				boost::format fmt("[%s] [%s:%d:%s:%s] [%s] %s\n");
@@ -167,7 +167,7 @@ namespace JMEngine
 				bool isOutFile = checkToFileLogLevel(level);
 				bool isOutScreen = checkToScreenLogLevel(level);
 
-				if (!isOutFile && isOutScreen)
+				if (!isOutFile && !isOutScreen)
 					return;
 
 				auto str = format(log, t1, t2...);
