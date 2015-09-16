@@ -283,8 +283,11 @@ namespace JMEngine
 				//如果没有等待写入文件的日志
 				boost::mutex::scoped_lock l(_log_mutex);
 				if (_waitLogList->empty())
+				{
+					dt->expires_from_now(boost::posix_time::seconds(15));
+					dt->async_wait(boost::bind(&GLog::run, this, dt));
 					return;
-
+				}
 				list<string>* list = _writeLogList;
 				_writeLogList = _waitLogList;
 				_waitLogList = list;
@@ -298,7 +301,7 @@ namespace JMEngine
 			logOfstream.flush();
 
 			_writeLogList->clear();
-			
+
 			dt->expires_from_now(boost::posix_time::seconds(15));
 			dt->async_wait(boost::bind(&GLog::run, this, dt));
 		}

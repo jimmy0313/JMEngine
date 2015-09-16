@@ -92,9 +92,6 @@ namespace JMEngine
 			static int fileIdx;	//用于按大小进行文件分割
 			static size_t fileSize;	//分割标准
 
-			bool isOutPutFile;
-			bool isOutPutScreen;
-
 			// for supporting multiple threads
 			boost::mutex _log_mutex;
 
@@ -137,7 +134,7 @@ namespace JMEngine
 
 				auto logStr = boost::str(fmt % ntm % file % line % function % thread % getGLogLevelName(level) % t1);
 
-				if (isOutPutScreen)
+				if (isOutScreen)
 				{
 					_log_mutex.lock();
 					setColor(color);
