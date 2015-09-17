@@ -58,7 +58,8 @@ namespace JMEngine
 		public:
 			typedef boost::shared_ptr<DBConnDelegator<T> > DelegtorPtr;
 		public:
-			explicit DBHelper(DelegtorPtr delegtor)
+			explicit DBHelper(DelegtorPtr delegtor):
+				_delegator((DBPool<T>*)delegtor.get())
 			{
 				_conn = _delegator->getConn();	// 获取连接
 				if (nullptr == _conn)
