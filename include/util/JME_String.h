@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <boost/cstdint.hpp>
+#include "boost/format.hpp"
 
 using namespace std;
 using namespace boost;
@@ -25,6 +26,37 @@ namespace JMEngine
 
 		int stringLength(const string& inStr);
 		int stringLength(const char* str, int len);
+
+		template<class... T>
+		string createString(const char* fmt, const T... t);
+
+		template<class T1, class... T2>
+		void format(boost::format& fmt, const T1 t1, const T2... t2);
+
+		template<class T>
+		void format(boost::format& fmt, const T t);
 	}
+
+	template<class T1, class... T2>
+	void JMEngine::tools::format(boost::format& fmt, const T1 t1, const T2... t2)
+	{
+		fmt % t1;
+		format(fmt, t2...);
+	}
+
+	template<class T>
+	void JMEngine::tools::format(boost::format& fmt, const T t)
+	{
+		fmt % t;
+	}
+
+	template<class... T>
+	string JMEngine::tools::createString(const char* fmt, const T... t)
+	{
+		boost::format fmt_(fmt);
+		format(fmt_, t...);
+		return fmt_.str();
+	}
+
 }
 #endif // JME_String_h__
