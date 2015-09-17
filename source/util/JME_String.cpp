@@ -169,9 +169,9 @@ namespace JMEngine
 			delete []newBuf;    
 		}  
 
-		void split( const string& str, vector<string>& strVec, const char sign /*= '|'*/ )
+		void split( const string& str, vector<string>& strVec, const char* sign )
 		{
-			boost::split( strVec, str, boost::is_any_of( "|" ), boost::token_compress_on );
+			boost::split( strVec, str, boost::is_any_of( sign ), boost::token_compress_on );
 		}
 
 		int stringLength(const string& inStr)

@@ -21,7 +21,7 @@ namespace JMEngine
 		void UnicodeToGB2312(char* pOut,wchar_t uData);
 		void UTF_8ToUnicode(wchar_t* pOut,char *pText);
 
-		void split(const string& str, vector<string>& strVec, const char sign = '|');
+		void split(const string& str, vector<string>& strVec, const char* sign);
 
 		int stringLength(const string& inStr);
 		int stringLength(const char* str, int len);
