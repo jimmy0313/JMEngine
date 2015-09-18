@@ -77,7 +77,7 @@ namespace JMEngine
 				delete result;
 				result = nullptr;
 
-				_server->response(session, rpc);
+				_server->response(session, response);
 			}
 		}
 
