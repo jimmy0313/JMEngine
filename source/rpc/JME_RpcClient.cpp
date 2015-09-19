@@ -68,7 +68,7 @@ namespace JMEngine
 
 			try
 			{
-				boost::mutex::scoped_lock lock(_mutex);
+				boost::recursive_mutex::scoped_lock lock(_mutex);
 
 				jme_rpc rpc;
 				rpc.set_rpc_id(++_methodId);
@@ -98,7 +98,7 @@ namespace JMEngine
 
 			try
 			{
-				boost::mutex::scoped_lock lock(_mutex);
+				boost::recursive_mutex::scoped_lock lock(_mutex);
 
 				jme_rpc rpc;
 				rpc.set_rpc_id(++_methodId);
@@ -129,7 +129,7 @@ namespace JMEngine
 
 			try
 			{
-				boost::mutex::scoped_lock lock(_mutex);
+				boost::recursive_mutex::scoped_lock lock(_mutex);
 
 				jme_rpc rpc;
 				rpc.set_rpc_id(++_methodId);
@@ -171,7 +171,7 @@ namespace JMEngine
 			jme_rpc rpc;
 			rpc.ParseFromString(m);
 
-			boost::mutex::scoped_lock lock(_mutex);
+			boost::recursive_mutex::scoped_lock lock(_mutex);
 			
 			auto it = _cbs.find(rpc.rpc_id());
 			if (it != _cbs.end())
@@ -193,7 +193,7 @@ namespace JMEngine
 
 		void JME_RpcClient::removeDeadRPC( int methodId )
 		{
-			boost::mutex::scoped_lock lock(_mutex);
+			boost::recursive_mutex::scoped_lock lock(_mutex);
 
 			auto it = _cbs.find(methodId);
 			if (it != _cbs.end())

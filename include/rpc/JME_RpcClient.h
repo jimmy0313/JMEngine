@@ -6,7 +6,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include "boost/function.hpp"
 #include "boost/shared_ptr.hpp"
-#include "boost/thread/mutex.hpp"
+#include "boost/thread/recursive_mutex.hpp"
 
 #include "google/protobuf/message.h"
 
@@ -89,7 +89,7 @@ namespace JMEngine
 			int _methodId;
 			map<int, JME_RpcCallback::JME_RpcCallbackPtr> _cbs;
 
-			boost::mutex _mutex;
+			boost::recursive_mutex _mutex;
 		};
 
 	}
