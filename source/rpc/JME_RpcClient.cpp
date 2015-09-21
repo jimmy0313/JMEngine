@@ -171,17 +171,23 @@ namespace JMEngine
 			jme_rpc rpc;
 			rpc.ParseFromString(m);
 
-			boost::recursive_mutex::scoped_lock lock(_mutex);
-			
-			auto it = _cbs.find(rpc.rpc_id());
-			if (it != _cbs.end())
+			JME_RpcCallback::JME_RpcCallbackPtr cb;
+
 			{
-				if (it->second->_checkDead)
-					it->second->_dt->cancel();
+				boost::recursive_mutex::scoped_lock lock(_mutex);
+				auto it = _cbs.find(rpc.rpc_id());
+				if (it != _cbs.end())
+				{
+					cb = it->second;
+					_cbs.erase(it);
+				}
+			}
+			if (cb)
+			{
+				if (cb->_checkDead)
+					cb->_dt->cancel();
 
-				it->second->_cb(rpc.params());
-
-				_cbs.erase(it);
+				cb->_cb(rpc.params());
 			}
 		}
 
