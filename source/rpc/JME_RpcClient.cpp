@@ -68,16 +68,19 @@ namespace JMEngine
 
 			try
 			{
-				boost::recursive_mutex::scoped_lock lock(_mutex);
-
 				jme_rpc rpc;
-				rpc.set_rpc_id(++_methodId);
+
+				{
+					boost::recursive_mutex::scoped_lock lock(_mutex);
+					rpc.set_rpc_id(++_methodId);
+					_cbs[_methodId] = JME_RpcCallback::create(cb);
+				}
+
 				rpc.set_method(method);
 				rpc.set_params(params->SerializeAsString());
 
 				auto m(boost::move(rpc.SerializeAsString()));
 				JME_Message msg(RPCMessage, m);	
-				_cbs[_methodId] = JME_RpcCallback::create(cb);
 
 				return _session.lock()->writeMessage(msg);
 			}
@@ -98,17 +101,19 @@ namespace JMEngine
 
 			try
 			{
-				boost::recursive_mutex::scoped_lock lock(_mutex);
-
 				jme_rpc rpc;
-				rpc.set_rpc_id(++_methodId);
+
+				{
+					boost::recursive_mutex::scoped_lock lock(_mutex);
+					rpc.set_rpc_id(++_methodId);
+					_cbs[_methodId] = JME_RpcCallback::create(shared_from_this(), cb, dt, dcb, _methodId);
+				}
+
 				rpc.set_method(method);
 				rpc.set_params(params->SerializeAsString());
 
 				auto m(boost::move(rpc.SerializeAsString()));
-
 				JME_Message msg(RPCMessage, m);	
-				_cbs[_methodId] = JME_RpcCallback::create(shared_from_this(), cb, dt, dcb, _methodId);
 
 				return _session.lock()->writeMessage(msg);
 			}
@@ -129,10 +134,11 @@ namespace JMEngine
 
 			try
 			{
-				boost::recursive_mutex::scoped_lock lock(_mutex);
-
 				jme_rpc rpc;
-				rpc.set_rpc_id(++_methodId);
+				{
+					boost::recursive_mutex::scoped_lock lock(_mutex);
+					rpc.set_rpc_id(++_methodId);
+				}
 				rpc.set_method(method);
 				rpc.set_params(params->SerializeAsString());
 
