@@ -5,6 +5,7 @@
 #include <string>
 #include <boost/cstdint.hpp>
 #include "boost/format.hpp"
+#include "JME_GLog.h"
 
 using namespace std;
 using namespace boost;
@@ -53,9 +54,17 @@ namespace JMEngine
 	template<class... T>
 	string JMEngine::tools::createString(const char* fmt, const T... t)
 	{
-		boost::format fmt_(fmt);
-		format(fmt_, t...);
-		return fmt_.str();
+		try
+		{
+			boost::format fmt_(fmt);
+			format(fmt_, t...);
+			return fmt_.str();
+		}
+		catch(const std::exception& e)
+		{
+			LOGE("%s with [ %s ]", e.what() , fmt);
+		}
+		return "";
 	}
 
 }
