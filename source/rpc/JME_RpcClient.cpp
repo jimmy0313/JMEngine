@@ -40,7 +40,6 @@ namespace JMEngine
 		{
 			auto session = JMEngine::net::JME_TcpSession::create(this, buffSize, reconnect);
 			_session = session;
-			session->setAsyncConnect(false);
 			session->connect(ip, port);
 		}
 
