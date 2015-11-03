@@ -158,7 +158,7 @@ namespace JMEngine
 			}
 
 
-			if (!error || error == boost::asio::error::would_block || error == boost::asio::error::try_again)
+			if (error == boost::asio::error::would_block || error == boost::asio::error::try_again)
 			{
 				_writeBlockTimes ++;
 
