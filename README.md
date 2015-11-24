@@ -1,4 +1,8 @@
 #JMEngine
+开发环境选择<br>
+windows: vs2012以上(vs2012为支持可变模板参数，编译器需要使用vc_compilerCTPNov2012)<br>
+linux: gcc 4.8.1以上<br>
+
 c++ 网游服务器框架代码
 
 网络：网络层使用boost::asio编写, 并再此之上封装了一个异步rpc调用模块, rpc协议使用protobuf, 支持超时
