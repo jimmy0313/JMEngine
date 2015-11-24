@@ -1,6 +1,6 @@
 #JMEngine
 开发环境选择<br>
-windows: vs2012以上(vs2012为支持可变模板参数，编译器需要使用vc_compilerCTPNov2012)<br>
+windows: vs2012以上(vs2012为支持可变模板参数,编译器需要使用vc_compilerCTPNov2012,external提供下载)<br>
 linux: gcc 4.8.1以上<br>
 
 c++ 网游服务器框架代码
