@@ -26,6 +26,19 @@ namespace JMEngine
 			virtual void sessionReceiveMessage(JME_TcpSessionPtr session, JME_MessagePtr msg) = 0;	//该函数将由逻辑线程调用
 			virtual void sessionReadError(JME_TcpSessionPtr session, boost::system::error_code e) = 0; //该函数将由逻辑线程调用
 		};
+	
+		class JME_UdpSession;
+		typedef boost::shared_ptr<JME_UdpSession> JME_UdpSessionPtr;
+	
+		class JME_UdpNetHandler
+		{
+		public:
+			typedef boost::shared_ptr<JME_UdpNetHandler> JME_UdpNetHandlerPtr;
+		
+		public:
+			virtual void onReceive(JME_UdpSessionPtr session, JME_MessagePtr msg) = 0;
+			virtual void onWrite(JME_UdpSessionPtr session) = 0;
+		};
 	}
 }
 #endif // JME_NetHandler_h__

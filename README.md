@@ -147,6 +147,48 @@ int main()
 }
 
 ```
+
+2015/12/31 新增 简单udp监听
+```cpp
+
+class UdpHandler :
+	public JME_UdpNetHandler
+{
+public:
+	void onReceive(JME_UdpSessionPtr session, JME_MessagePtr msg)
+	{		
+		//逻辑线程处理接收到的消息
+		session->writeMessage(*msg);
+	}
+	void onWrite(JME_UdpSessionPtr session)
+	{
+		//处理完一条消息后,才能继续接受下一条消息
+		session->startRead();
+	}
+};
+int main()
+{
+	JMECore.start();
+
+	auto udp_handler = boost::shared_ptr<UdpHandler>(new UdpHandler);
+	auto udp_session = JME_UdpSession::create(udp_handler, 6002, 10240);
+	udp_session->startRead();
+
+	while (1)
+	{
+		string cmd;
+		cin >> cmd;
+
+		if (!cmd.compare("quit"))
+		{
+			break;
+		}
+	}
+	JMECore.stop();
+	return 0;
+};
+
+```
 相关第三方库列表
 protobuf
 boost.1.49.0

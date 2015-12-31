@@ -88,6 +88,7 @@
     <ClInclude Include="include\net\JME_NetHandler.h" />
     <ClInclude Include="include\net\JME_ReadBuffer.h" />
     <ClInclude Include="include\net\JME_TcpSession.h" />
+    <ClInclude Include="include\net\JME_UdpSession.h" />
     <ClInclude Include="include\rpc\JME_RpcClient.h" />
     <ClInclude Include="include\rpc\JME_RpcHandler.h" />
     <ClInclude Include="include\rpc\JME_RpcServer.h" />
@@ -105,6 +106,7 @@
     <ClCompile Include="source\net\JME_Acceptor.cpp" />
     <ClCompile Include="source\net\JME_Core.cpp" />
     <ClCompile Include="source\net\JME_TcpSession.cpp" />
+    <ClCompile Include="source\net\JME_UdpSession.cpp" />
     <ClCompile Include="source\rpc\JME_RpcClient.cpp" />
     <ClCompile Include="source\rpc\JME_RpcHandler.cpp" />
     <ClCompile Include="source\rpc\JME_RpcServer.cpp" />

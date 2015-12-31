@@ -141,6 +141,9 @@
     <ClInclude Include="include\rpc\rpc.pb.h">
       <Filter>include\rpc</Filter>
     </ClInclude>
+    <ClInclude Include="include\net\JME_UdpSession.h">
+      <Filter>include\net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\log\JME_GLog.cpp">
@@ -187,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="source\rpc\rpc.pb.cc">
       <Filter>source\rpc</Filter>
+    </ClCompile>
+    <ClCompile Include="source\net\JME_UdpSession.cpp">
+      <Filter>source\net</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
