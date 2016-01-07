@@ -138,11 +138,11 @@
     <ClInclude Include="include\db\JME_DBPool.h">
       <Filter>include\db</Filter>
     </ClInclude>
-    <ClInclude Include="include\rpc\rpc.pb.h">
-      <Filter>include\rpc</Filter>
-    </ClInclude>
     <ClInclude Include="include\net\JME_UdpSession.h">
       <Filter>include\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rpc\JME_RpcPb.h">
+      <Filter>include\rpc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -188,11 +188,11 @@
     <ClCompile Include="source\rpc\JME_RpcClient.cpp">
       <Filter>source\rpc</Filter>
     </ClCompile>
-    <ClCompile Include="source\rpc\rpc.pb.cc">
-      <Filter>source\rpc</Filter>
-    </ClCompile>
     <ClCompile Include="source\net\JME_UdpSession.cpp">
       <Filter>source\net</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rpc\JME_RpcPb.cpp">
+      <Filter>source\rpc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

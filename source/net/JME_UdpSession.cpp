@@ -1,6 +1,6 @@
-#include "JME_UdpSession.h"
-#include "JME_GLog.h"
-#include "JME_Core.h"
+#include "net/JME_UdpSession.h"
+#include "log/JME_GLog.h"
+#include "net/JME_Core.h"
 namespace JMEngine
 {
 	namespace net

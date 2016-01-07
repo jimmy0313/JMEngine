@@ -2,7 +2,7 @@
 // source: rpc.proto
 
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
-#include "rpc.pb.h"
+#include "rpc/JME_RpcPb.h"
 
 #include <algorithm>
 

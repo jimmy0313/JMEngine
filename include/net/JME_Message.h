@@ -5,8 +5,9 @@
 #include <iostream>
 #include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
-#include <nedmalloc.h>
 #include <string>
+
+#include "memory/nedmalloc.h"
 
 using namespace std;
 

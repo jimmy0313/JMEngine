@@ -9,8 +9,8 @@
 
 #include "google/protobuf/message.h"
 
-#include "JME_GLog.h"
-#include "JME_TcpSession.h"
+#include "log/JME_GLog.h"
+#include "net/JME_TcpSession.h"
 using namespace std;
 namespace JMEngine
 {

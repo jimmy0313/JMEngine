@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 #include <sys/stat.h>
-#include "JME_GLog.h"
-#include "JME_GLogLevel.h"
-#include "JME_GLogColor.h"
+#include "log/JME_GLog.h"
+#include "log/JME_GLogLevel.h"
+#include "log/JME_GLogColor.h"
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>

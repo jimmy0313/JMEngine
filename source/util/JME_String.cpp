@@ -1,5 +1,5 @@
-#include "JME_String.h"
-#include "JME_GLog.h"
+#include "util/JME_String.h"
+#include "log/JME_GLog.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 

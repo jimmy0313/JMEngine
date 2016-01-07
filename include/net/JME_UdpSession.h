@@ -2,11 +2,11 @@
 #define JME_UdpSession_h__
 
 #include "boost/asio.hpp"
-#include "JME_NetHandler.h"
-#include "JME_ReadBuffer.h"
+#include "net/JME_NetHandler.h"
+#include "net/JME_ReadBuffer.h"
 #include "boost/enable_shared_from_this.hpp"
 
-#include "JME_Message.h"
+#include "net/JME_Message.h"
 namespace JMEngine
 {
 	namespace net

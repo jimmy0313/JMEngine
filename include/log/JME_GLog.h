@@ -4,8 +4,6 @@
 #include <list>
 #include <string>
 #include <map>
-#include "JME_GLogLevel.h"
-#include "JME_GLogColor.h"
 #include <iostream>
 #include <fstream>
 #include <boost/system/error_code.hpp>
@@ -14,6 +12,9 @@
 #include <boost/format.hpp>
 #include "boost/thread.hpp"
 #include "boost/asio.hpp"
+
+#include "log/JME_GLogLevel.h"
+#include "log/JME_GLogColor.h"
 
 using namespace std;
 using namespace JMEngine::log;

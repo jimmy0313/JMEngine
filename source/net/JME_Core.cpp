@@ -1,5 +1,5 @@
-#include "JME_Core.h"
-#include "JME_GLog.h"
+#include "net/JME_Core.h"
+#include "log/JME_GLog.h"
 
 
 namespace JMEngine

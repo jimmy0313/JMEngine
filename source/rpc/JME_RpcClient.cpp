@@ -1,7 +1,7 @@
-#include "JME_RpcClient.h"
-#include "JME_Message.h"
-#include "JME_Core.h"
-#include "rpc.pb.h"
+#include "rpc/JME_RpcClient.h"
+#include "net/JME_Message.h"
+#include "net/JME_Core.h"
+#include "rpc/JME_RpcPb.h"
 
 using namespace JMEngine;
 using namespace JMEngine::net;

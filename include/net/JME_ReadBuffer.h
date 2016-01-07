@@ -3,9 +3,9 @@
 
 #include <vector>
 #include <string.h>
-#include <nedmalloc.h>
-#include "JME_Message.h"
-#include "JME_GLog.h"
+#include "memory/nedmalloc.h"
+#include "net/JME_Message.h"
+#include "log/JME_GLog.h"
 
 namespace JMEngine
 {

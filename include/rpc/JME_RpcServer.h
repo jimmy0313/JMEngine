@@ -8,11 +8,11 @@
 
 #include "google/protobuf/message.h"
 
-#include "JME_RpcHandler.h"
-#include "JME_Acceptor.h"
-#include "JME_NetHandler.h"
-#include "JME_TcpSession.h"
-#include "rpc.pb.h"
+#include "rpc/JME_RpcHandler.h"
+#include "net/JME_Acceptor.h"
+#include "net/JME_NetHandler.h"
+#include "net/JME_TcpSession.h"
+#include "rpc/JME_RpcPb.h"
 
 using namespace std;
 namespace JMEngine

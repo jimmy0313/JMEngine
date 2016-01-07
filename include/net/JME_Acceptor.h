@@ -6,8 +6,8 @@
 #include "boost/shared_ptr.hpp"
 #include "boost/asio.hpp"
 
-#include "JME_TcpSession.h"
-#include "JME_NetHandler.h"
+#include "net/JME_TcpSession.h"
+#include "net/JME_NetHandler.h"
 
 using namespace std;
 namespace JMEngine

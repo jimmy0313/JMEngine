@@ -10,10 +10,10 @@
 
 #include "google/protobuf/message.h"
 
-#include "JME_RpcHandler.h"
-#include "JME_TcpSession.h"
-#include "JME_NetHandler.h"
-#include "JME_Core.h"
+#include "rpc/JME_RpcHandler.h"
+#include "net/JME_TcpSession.h"
+#include "net/JME_NetHandler.h"
+#include "net/JME_Core.h"
 
 using namespace std;
 namespace Json

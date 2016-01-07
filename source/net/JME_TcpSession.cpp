@@ -1,9 +1,8 @@
-#include <nedmalloc.h>
 #include "boost/bind.hpp"
-
-#include "JME_GLog.h"
-#include "JME_TcpSession.h"
-#include "JME_Core.h"
+#include "memory/nedmalloc.h"
+#include "log/JME_GLog.h"
+#include "net/JME_TcpSession.h"
+#include "net/JME_Core.h"
 namespace JMEngine
 {
 	namespace net

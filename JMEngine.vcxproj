@@ -45,7 +45,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>include;include/net;include/log;include/util;include/json;include/memory;include/rpc;include/server;include/db</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include;include/json</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -91,8 +91,8 @@
     <ClInclude Include="include\net\JME_UdpSession.h" />
     <ClInclude Include="include\rpc\JME_RpcClient.h" />
     <ClInclude Include="include\rpc\JME_RpcHandler.h" />
+    <ClInclude Include="include\rpc\JME_RpcPb.h" />
     <ClInclude Include="include\rpc\JME_RpcServer.h" />
-    <ClInclude Include="include\rpc\rpc.pb.h" />
     <ClInclude Include="include\util\JME_Encrypt.h" />
     <ClInclude Include="include\util\JME_String.h" />
   </ItemGroup>
@@ -109,8 +109,8 @@
     <ClCompile Include="source\net\JME_UdpSession.cpp" />
     <ClCompile Include="source\rpc\JME_RpcClient.cpp" />
     <ClCompile Include="source\rpc\JME_RpcHandler.cpp" />
+    <ClCompile Include="source\rpc\JME_RpcPb.cpp" />
     <ClCompile Include="source\rpc\JME_RpcServer.cpp" />
-    <ClCompile Include="source\rpc\rpc.pb.cc" />
     <ClCompile Include="source\util\JME_Encrypt.cpp" />
     <ClCompile Include="source\util\JME_String.cpp" />
   </ItemGroup>

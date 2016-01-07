@@ -1,10 +1,10 @@
-#include "JME_JsonFile.h"
+#include "json/JME_JsonFile.h"
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/xpressive/xpressive_dynamic.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/iterator/reverse_iterator.hpp>
-#include "JME_GLog.h"
+#include "log/JME_GLog.h"
 
 using namespace std;
 using namespace boost::filesystem;

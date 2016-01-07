@@ -14,9 +14,9 @@
 #include <boost/asio.hpp>
 #include <boost/function.hpp>
 
-#include "JME_Message.h"
-#include "JME_ReadBuffer.h"
-#include "JME_NetHandler.h"
+#include "net/JME_Message.h"
+#include "net/JME_ReadBuffer.h"
+#include "net/JME_NetHandler.h"
 
 using boost::asio::ip::tcp;
 

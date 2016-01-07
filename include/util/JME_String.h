@@ -5,7 +5,7 @@
 #include <string>
 #include <boost/cstdint.hpp>
 #include "boost/format.hpp"
-#include "JME_GLog.h"
+#include "log/JME_GLog.h"
 
 using namespace std;
 using namespace boost;

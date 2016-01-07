@@ -48,7 +48,7 @@ DEALINGS IN THE SOFTWARE.
 #endif
 
 
-#include "nedmalloc.h"
+#include "memory/nedmalloc.h"
 #if defined(WIN32)
  #include <malloc.h>
 #endif
@@ -97,7 +97,7 @@ DEALINGS IN THE SOFTWARE.
 /*#define USE_SPIN_LOCKS 0*/
 
 
-#include "malloc.c.h"
+#include "memory/malloc.c.h"
 #ifdef NDEBUG               /* Disable assert checking on release builds */
  #undef DEBUG
 #elif !NEDMALLOC_DEBUG

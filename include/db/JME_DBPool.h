@@ -17,7 +17,7 @@
 #include "boost/function.hpp"
 #include <deque>
 #include <string>
-#include "JME_GLog.h"
+#include "log/JME_GLog.h"
 
 using namespace std;
 namespace JMEngine

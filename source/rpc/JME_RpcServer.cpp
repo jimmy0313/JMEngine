@@ -1,6 +1,6 @@
-#include "JME_RpcServer.h"
-#include "JME_GLog.h"
-#include "JME_Core.h"
+#include "rpc/JME_RpcServer.h"
+#include "log/JME_GLog.h"
+#include "net/JME_Core.h"
 
 namespace JMEngine
 {
