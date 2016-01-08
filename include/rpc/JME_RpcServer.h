@@ -35,7 +35,7 @@ namespace JMEngine
 			void stop();
 
 		private:
-			JMEngine::net::TcpAcceptor::JME_TcpAcceptorPtr _acceptorPtr;
+			JMEngine::net::TcpAcceptor::TcpAcceptorPtr _acceptorPtr;
 			RpcHandlerInterface::RpcHandlerInterfacePtr _handler;
 		}; 
 

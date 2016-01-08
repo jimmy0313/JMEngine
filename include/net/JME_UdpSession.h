@@ -15,13 +15,13 @@ namespace JMEngine
 			public boost::enable_shared_from_this<UdpSession>
 		{
 		public:
-			typedef boost::shared_ptr<UdpSession> JME_UdpSessionPtr;
+			typedef boost::shared_ptr<UdpSession> UdpSessionPtr;
 
 		public:
 			UdpSession(JMEngine::net::UdpNetHandler::UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size);
 			~UdpSession();
 
-			static JMEngine::net::UdpSession::JME_UdpSessionPtr create(JMEngine::net::UdpNetHandler::UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size);
+			static JMEngine::net::UdpSession::UdpSessionPtr create(JMEngine::net::UdpNetHandler::UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size);
 		
 			void startRead();
 			

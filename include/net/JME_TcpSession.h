@@ -82,7 +82,7 @@ namespace JMEngine
 			// write message 
 			void writeLock(const char* dataPtr, const int len);
 			bool writeMessage(const Message& msg);
-			bool writeMessage(Message::JME_MessagePtr msg);
+			bool writeMessage(Message::MessagePtr msg);
 
 		private:
 			void onConnect();

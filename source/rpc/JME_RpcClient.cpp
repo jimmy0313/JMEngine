@@ -52,9 +52,9 @@ namespace JMEngine
 			}
 		}
 
-		JMEngine::rpc::RpcClient::JME_RpcClientPtr RpcClient::create( const string& ip, const string& port, size_t buffSize, size_t reconnect )
+		JMEngine::rpc::RpcClient::RpcClientPtr RpcClient::create( const string& ip, const string& port, size_t buffSize, size_t reconnect )
 		{
-			return JMEngine::rpc::RpcClient::JME_RpcClientPtr(new RpcClient(ip, port, reconnect, buffSize));
+			return JMEngine::rpc::RpcClient::RpcClientPtr(new RpcClient(ip, port, reconnect, buffSize));
 		}
 
 		bool RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, RpcCallback::RpcHandler cb )
@@ -213,7 +213,7 @@ namespace JMEngine
 			}
 		}
 
-		void RpcClient::RpcDeadCallback( JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, RpcCallback::RpcDeadHandler dcb )
+		void RpcClient::RpcDeadCallback( RpcClientPtr client, const boost::system::error_code& err, int methodId, RpcCallback::RpcDeadHandler dcb )
 		{
 			if (err)
 				return;

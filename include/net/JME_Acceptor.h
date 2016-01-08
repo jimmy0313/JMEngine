@@ -17,13 +17,13 @@ namespace JMEngine
 		class TcpAcceptor
 		{
 		public:
-			typedef boost::shared_ptr<TcpAcceptor> JME_TcpAcceptorPtr;
+			typedef boost::shared_ptr<TcpAcceptor> TcpAcceptorPtr;
 			typedef boost::shared_ptr<boost::asio::ip::tcp::acceptor> AcceptorPtr;
 		public:
 			TcpAcceptor(JMEngine::net::NetHandler::NetHandlerPtr handler, unsigned short port);
 			~TcpAcceptor();
 
-			static JMEngine::net::TcpAcceptor::JME_TcpAcceptorPtr create(JMEngine::net::NetHandler::NetHandlerPtr handler, unsigned short port);
+			static JMEngine::net::TcpAcceptor::TcpAcceptorPtr create(JMEngine::net::NetHandler::NetHandlerPtr handler, unsigned short port);
 
 			void accept(size_t reconnect, size_t bufferSize);
 		private:

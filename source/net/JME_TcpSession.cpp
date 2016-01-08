@@ -213,7 +213,7 @@ namespace JMEngine
 			return false;
 		}
 
-		bool TcpSession::writeMessage( Message::JME_MessagePtr msg )
+		bool TcpSession::writeMessage( Message::MessagePtr msg )
 		{
 			return writeMessage(*msg);
 		}

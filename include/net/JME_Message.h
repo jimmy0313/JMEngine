@@ -41,7 +41,7 @@ namespace JMEngine
 		};
 		struct Message : public MessageHeader
 		{
-			typedef	boost::shared_ptr<JMEngine::net::Message>	JME_MessagePtr;
+			typedef	boost::shared_ptr<JMEngine::net::Message>	MessagePtr;
 			const char*	_msgData;
 
 			Message():
@@ -86,10 +86,10 @@ namespace JMEngine
 			{
 				nedalloc::nedfree(msg);
 			}
-			static JME_MessagePtr create(const char* dataPtr,size_t len)
+			static MessagePtr create(const char* dataPtr,size_t len)
 			{
 				void* m = nedalloc::nedmalloc(len + sizeof(long));
-				return JME_MessagePtr(new(m) Message(dataPtr), destory);
+				return MessagePtr(new(m) Message(dataPtr), destory);
 			}
 		};
 #pragma pack(pop)

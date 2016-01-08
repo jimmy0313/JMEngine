@@ -31,7 +31,7 @@ namespace JMEngine
 		public:
 			friend class IoServiceCore;
 
-			typedef boost::shared_ptr<Thread> JME_ThreadPtr;
+			typedef boost::shared_ptr<Thread> ThreadPtr;
 			typedef boost::shared_ptr<io_service> ioServicePtr;
 			typedef boost::shared_ptr<io_service::work> workPtr;
 			typedef boost::shared_ptr<thread> threadPtr;
@@ -40,7 +40,7 @@ namespace JMEngine
 			Thread();
 			~Thread();
 
-			static JME_ThreadPtr create();
+			static ThreadPtr create();
 			
 			void run();
 			void stop();
@@ -73,8 +73,8 @@ namespace JMEngine
 			void stop();
 
 		private:
-			Thread::JME_ThreadPtr _netThread;
-			Thread::JME_ThreadPtr _logicThread;
+			Thread::ThreadPtr _netThread;
+			Thread::ThreadPtr _logicThread;
 		};
 
 /*#if _MSC_VER >= 1800*/

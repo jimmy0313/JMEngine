@@ -55,14 +55,14 @@ namespace JMEngine
 			public boost::enable_shared_from_this<RpcClient>
 		{
 		public:
-			typedef boost::shared_ptr<RpcClient> JME_RpcClientPtr;
+			typedef boost::shared_ptr<RpcClient> RpcClientPtr;
 
 			friend class RpcCallback;
 		public:
 			RpcClient(const string& ip, const string& port, size_t buffSize, size_t reconnect);
 			~RpcClient();
 
-			static JMEngine::rpc::RpcClient::JME_RpcClientPtr create(const string& ip, const string& port, size_t buffSize, size_t reconnect);
+			static JMEngine::rpc::RpcClient::RpcClientPtr create(const string& ip, const string& port, size_t buffSize, size_t reconnect);
 			
 			bool callRpcMethod(const char* method, const google::protobuf::Message* params);
 			bool callRpcMethod(const char* method, const google::protobuf::Message* params, RpcCallback::RpcHandler cb);	//返回值为真 表示参数
@@ -81,7 +81,7 @@ namespace JMEngine
 		protected:
 			void removeDeadRPC(int methodId);
 
-			static void RpcDeadCallback(JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, RpcCallback::RpcDeadHandler dcb);
+			static void RpcDeadCallback(RpcClientPtr client, const boost::system::error_code& err, int methodId, RpcCallback::RpcDeadHandler dcb);
 
 		private:
 			JMEngine::net::TcpSession::TcpSessionWeakPtr _session;

@@ -32,9 +32,9 @@ namespace JMEngine
 			}
 		}
 
-		JMEngine::net::UdpSession::JME_UdpSessionPtr UdpSession::create(JMEngine::net::UdpNetHandler::UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size)
+		JMEngine::net::UdpSession::UdpSessionPtr UdpSession::create(JMEngine::net::UdpNetHandler::UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size)
 		{
-			return JMEngine::net::UdpSession::JME_UdpSessionPtr(new UdpSession(handler, port, buffer_size));
+			return JMEngine::net::UdpSession::UdpSessionPtr(new UdpSession(handler, port, buffer_size));
 		}
 
 		void UdpSession::doRead()

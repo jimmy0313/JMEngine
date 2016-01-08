@@ -19,9 +19,9 @@ namespace JMEngine
 
 		}
 
-		JMEngine::net::TcpAcceptor::JME_TcpAcceptorPtr TcpAcceptor::create( JMEngine::net::NetHandler::NetHandlerPtr handler, unsigned short port )
+		JMEngine::net::TcpAcceptor::TcpAcceptorPtr TcpAcceptor::create( JMEngine::net::NetHandler::NetHandlerPtr handler, unsigned short port )
 		{
-			return JMEngine::net::TcpAcceptor::JME_TcpAcceptorPtr(new TcpAcceptor(handler, port));
+			return JMEngine::net::TcpAcceptor::TcpAcceptorPtr(new TcpAcceptor(handler, port));
 		}
 
 		void TcpAcceptor::accept(size_t reconnect, size_t bufferSize)

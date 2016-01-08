@@ -62,9 +62,9 @@ namespace JMEngine
 			stop();
 		}
 
-		Thread::JME_ThreadPtr Thread::create()
+		Thread::ThreadPtr Thread::create()
 		{
-			return JME_ThreadPtr(new Thread);
+			return ThreadPtr(new Thread);
 		}
 
 		void Thread::stop()
