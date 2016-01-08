@@ -16,13 +16,13 @@ namespace JMEngine
 {
 	namespace rpc
 	{
-		class JME_RpcServer;
-		typedef boost::shared_ptr<JME_RpcServer> JME_RpcServerPtr;
+		class RpcServer;
+		typedef boost::shared_ptr<RpcServer> RpcServerPtr;
 
-		class JME_RpcHandler
+		class RpcHandlerInterface
 		{
 		public:
-			typedef boost::shared_ptr<JME_RpcHandler> JME_RpcHandlerPtr;
+			typedef boost::shared_ptr<RpcHandlerInterface> RpcHandlerInterfacePtr;
 
 			//rpc处理函数函数 负责分配 返回Message, rpc服务侧负责释放Message
 			typedef boost::function<google::protobuf::Message*(const string& params)> RpcHandler;
@@ -30,7 +30,7 @@ namespace JMEngine
 			template<class T>
 			static void bindHandler();
 
-			static JME_RpcHandler::JME_RpcHandlerPtr create();
+			static RpcHandlerInterface::RpcHandlerInterfacePtr create();
 			static void regRpcHandler(const char* method, RpcHandler handler);
 			static google::protobuf::Message* execRpcHandler(const string& method, const string& params);
 
@@ -39,7 +39,7 @@ namespace JMEngine
 		};
 
 		template<class T>
-		void JMEngine::rpc::JME_RpcHandler::bindHandler()
+		void JMEngine::rpc::RpcHandlerInterface::bindHandler()
 		{
 			auto handler = boost::shared_ptr<T>(new T);
 			handler->init();

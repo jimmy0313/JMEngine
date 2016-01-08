@@ -19,43 +19,43 @@ namespace JMEngine
 {
 	namespace rpc
 	{
-		class JME_RpcServer
+		class RpcServer
 		{
 		public:
-			typedef boost::shared_ptr<JME_RpcServer> JME_RpcServerPtr;
+			typedef boost::shared_ptr<RpcServer> RpcServerPtr;
 		public:
-			JME_RpcServer(JME_RpcHandler::JME_RpcHandlerPtr handler, unsigned short port, size_t bufferSize);
-			~JME_RpcServer();
+			RpcServer(RpcHandlerInterface::RpcHandlerInterfacePtr handler, unsigned short port, size_t bufferSize);
+			~RpcServer();
 
-			static JMEngine::rpc::JME_RpcServer::JME_RpcServerPtr create(JME_RpcHandler::JME_RpcHandlerPtr handler, unsigned short port, size_t bufferSize);
+			static JMEngine::rpc::RpcServer::RpcServerPtr create(RpcHandlerInterface::RpcHandlerInterfacePtr handler, unsigned short port, size_t bufferSize);
 			
-			void response(JMEngine::net::JME_TcpSessionPtr session, const jme_rpc& params);
+			void response(JMEngine::net::TcpSessionPtr session, const jme_rpc& params);
 		public:
 			void start();
 			void stop();
 
 		private:
-			JMEngine::net::JME_TcpAcceptor::JME_TcpAcceptorPtr _acceptorPtr;
-			JME_RpcHandler::JME_RpcHandlerPtr _handler;
+			JMEngine::net::TcpAcceptor::JME_TcpAcceptorPtr _acceptorPtr;
+			RpcHandlerInterface::RpcHandlerInterfacePtr _handler;
 		}; 
 
-		class JME_RpcSessionNetHandler : public JMEngine::net::JME_NetHandler
+		class RpcSessionNetHandler : public JMEngine::net::NetHandler
 		{
 		public:
-			typedef boost::shared_ptr<JME_RpcSessionNetHandler> JME_RpcSessionNetHandlerPtr;
+			typedef boost::shared_ptr<RpcSessionNetHandler> RpcSessionNetHandlerPtr;
 
 		public:
-			JME_RpcSessionNetHandler(JME_RpcServer* server, JME_RpcHandler::JME_RpcHandlerPtr handler);
-			static JMEngine::rpc::JME_RpcSessionNetHandler::JME_RpcSessionNetHandlerPtr create(JME_RpcServer* server, JME_RpcHandler::JME_RpcHandlerPtr handler);
+			RpcSessionNetHandler(RpcServer* server, RpcHandlerInterface::RpcHandlerInterfacePtr handler);
+			static JMEngine::rpc::RpcSessionNetHandler::RpcSessionNetHandlerPtr create(RpcServer* server, RpcHandlerInterface::RpcHandlerInterfacePtr handler);
 
-			void sessionConnectSucceed(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session);
-			void sessionConnectFailed(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
-			void sessionDisconnect(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
-			void sessionReceiveMessage(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, JMEngine::net::JME_MessagePtr msg);
-			void sessionReadError(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
+			void sessionConnectSucceed(JMEngine::net::TcpSession::TcpSessionPtr session);
+			void sessionConnectFailed(JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e);
+			void sessionDisconnect(JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e);
+			void sessionReceiveMessage(JMEngine::net::TcpSession::TcpSessionPtr session, JMEngine::net::MessagePtr msg);
+			void sessionReadError(JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e);
 		private:
-			JME_RpcHandler::JME_RpcHandlerPtr _handler;
-			JME_RpcServer* _server;
+			RpcHandlerInterface::RpcHandlerInterfacePtr _handler;
+			RpcServer* _server;
 		};
 	}
 }

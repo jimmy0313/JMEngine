@@ -39,37 +39,37 @@ namespace JMEngine
 			int _netId;
 			int _bindId;
 		};
-		struct JME_Message : public MessageHeader
+		struct Message : public MessageHeader
 		{
-			typedef	boost::shared_ptr<JMEngine::net::JME_Message>	JME_MessagePtr;
+			typedef	boost::shared_ptr<JMEngine::net::Message>	JME_MessagePtr;
 			const char*	_msgData;
 
-			JME_Message():
+			Message():
 				MessageHeader()
 			{
 			}
-			JME_Message(short msgId):
+			Message(short msgId):
 				MessageHeader(msgId)
 			{
 			}
-			JME_Message(short msgId, const string& msgStr):
+			Message(short msgId, const string& msgStr):
 				MessageHeader(msgId)
 			{
 				_totalLen = msgStr.size() + MessageHeaderLength;
 				_msgData = msgStr.data();
 			}
-			JME_Message(short msgId, int netId, const string& msgStr):
+			Message(short msgId, int netId, const string& msgStr):
 				MessageHeader(msgId)
 			{
 				_netId = netId;
 				_totalLen = msgStr.size() + MessageHeaderLength;
 				_msgData = msgStr.data();
 			}
-			JME_Message(const char* data_ptr)
+			Message(const char* data_ptr)
 			{
 				memcpy(this, data_ptr, MessageHeaderLength);
 				size_t msgSize = _totalLen - MessageHeaderLength;
-				char* msgPtr = (char*)this + sizeof(JME_Message);			
+				char* msgPtr = (char*)this + sizeof(Message);			
 				memcpy(msgPtr, data_ptr + MessageHeaderLength, msgSize);
 				_msgData = msgPtr;
 			}
@@ -82,14 +82,14 @@ namespace JMEngine
 			{
 				return string(_msgData, messageDataLen());
 			}
-			static void	destory(JME_Message* msg)
+			static void	destory(Message* msg)
 			{
 				nedalloc::nedfree(msg);
 			}
 			static JME_MessagePtr create(const char* dataPtr,size_t len)
 			{
 				void* m = nedalloc::nedmalloc(len + sizeof(long));
-				return JME_MessagePtr(new(m) JME_Message(dataPtr), destory);
+				return JME_MessagePtr(new(m) Message(dataPtr), destory);
 			}
 		};
 #pragma pack(pop)

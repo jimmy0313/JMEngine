@@ -5,9 +5,9 @@ namespace JMEngine
 	namespace rpc
 	{
 
-		map<string, JME_RpcHandler::RpcHandler> JMEngine::rpc::JME_RpcHandler::_handlers;
+		map<string, RpcHandlerInterface::RpcHandler> JMEngine::rpc::RpcHandlerInterface::_handlers;
 
-		void JME_RpcHandler::regRpcHandler( const char* method, RpcHandler handler )
+		void RpcHandlerInterface::regRpcHandler( const char* method, RpcHandler handler )
 		{
 			auto res = _handlers.insert(make_pair(method,handler)); 
 			if(!res.second)
@@ -21,7 +21,7 @@ namespace JMEngine
 			}
 		}
 
-		google::protobuf::Message* JME_RpcHandler::execRpcHandler( const string& method, const string& params )
+		google::protobuf::Message* RpcHandlerInterface::execRpcHandler( const string& method, const string& params )
 		{
 			auto it = _handlers.find(method);
 			if (it == _handlers.end())
@@ -35,9 +35,9 @@ namespace JMEngine
 			return nullptr;
 		}
 
-		JME_RpcHandler::JME_RpcHandlerPtr JME_RpcHandler::create()
+		RpcHandlerInterface::RpcHandlerInterfacePtr RpcHandlerInterface::create()
 		{
-			return JME_RpcHandlerPtr(new JME_RpcHandler);
+			return RpcHandlerInterfacePtr(new RpcHandlerInterface);
 		}
 
 	}

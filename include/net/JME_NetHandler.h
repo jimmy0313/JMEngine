@@ -9,35 +9,34 @@ namespace JMEngine
 {
 	namespace net
 	{
-		class JME_TcpSession;
-		typedef boost::shared_ptr<JME_TcpSession> JME_TcpSessionPtr;
+		class TcpSession;
+		typedef boost::shared_ptr<TcpSession> TcpSessionPtr;
 
-		class JME_Message;
-		typedef boost::shared_ptr<JME_Message> JME_MessagePtr;
-		class JME_NetHandler
+		class Message;
+		typedef boost::shared_ptr<Message> MessagePtr;
+		class NetHandler
 		{		
 		public:
-			typedef boost::shared_ptr<JME_NetHandler> JME_NetHandlerPtr;
-			typedef boost::weak_ptr<JME_NetHandler> JME_NetHandlerWeakPtr;
+			typedef boost::shared_ptr<NetHandler> NetHandlerPtr;
 		public:
-			virtual void sessionConnectSucceed(JME_TcpSessionPtr session) = 0;	//该函数将由逻辑线程调用
-			virtual void sessionConnectFailed(JME_TcpSessionPtr session, boost::system::error_code e) = 0; //该函数将由逻辑线程调用
-			virtual void sessionDisconnect(JME_TcpSessionPtr session, boost::system::error_code e) = 0; //该函数将由逻辑线程调用
-			virtual void sessionReceiveMessage(JME_TcpSessionPtr session, JME_MessagePtr msg) = 0;	//该函数将由逻辑线程调用
-			virtual void sessionReadError(JME_TcpSessionPtr session, boost::system::error_code e) = 0; //该函数将由逻辑线程调用
+			virtual void sessionConnectSucceed(TcpSessionPtr session) = 0;	//该函数将由逻辑线程调用
+			virtual void sessionConnectFailed(TcpSessionPtr session, boost::system::error_code e) = 0; //该函数将由逻辑线程调用
+			virtual void sessionDisconnect(TcpSessionPtr session, boost::system::error_code e) = 0; //该函数将由逻辑线程调用
+			virtual void sessionReceiveMessage(TcpSessionPtr session, MessagePtr msg) = 0;	//该函数将由逻辑线程调用
+			virtual void sessionReadError(TcpSessionPtr session, boost::system::error_code e) = 0; //该函数将由逻辑线程调用
 		};
 	
-		class JME_UdpSession;
-		typedef boost::shared_ptr<JME_UdpSession> JME_UdpSessionPtr;
+		class UdpSession;
+		typedef boost::shared_ptr<UdpSession> UdpSessionPtr;
 	
-		class JME_UdpNetHandler
+		class UdpNetHandler
 		{
 		public:
-			typedef boost::shared_ptr<JME_UdpNetHandler> JME_UdpNetHandlerPtr;
+			typedef boost::shared_ptr<UdpNetHandler> UdpNetHandlerPtr;
 		
 		public:
-			virtual void onReceive(JME_UdpSessionPtr session, JME_MessagePtr msg) = 0;
-			virtual void onWrite(JME_UdpSessionPtr session) = 0;
+			virtual void onReceive(UdpSessionPtr session, MessagePtr msg) = 0;
+			virtual void onWrite(UdpSessionPtr session) = 0;
 		};
 	}
 }

@@ -10,40 +10,40 @@ namespace JMEngine
 	namespace rpc
 	{
 
-		JME_RpcCallback::JME_RpcCallback( RpcHandler cb ):
+		RpcCallback::RpcCallback( RpcHandler cb ):
 			_cb(cb),
 			_checkDead(false)
 		{
 		}
 
-		JME_RpcCallback::JME_RpcCallback( JME_RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId ):
+		RpcCallback::RpcCallback( RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId ):
 			_cb(cb),
 			_checkDead(true)
 		{
 			_dt = DeadTimePtr(new boost::asio::deadline_timer(JMECore.getLogicioService()));
 			_dt->expires_from_now(boost::posix_time::seconds(t));
-			_dt->async_wait(boost::bind(JME_RpcClient::RpcDeadCallback, client, boost::asio::placeholders::error, methodId, dcb));
+			_dt->async_wait(boost::bind(RpcClient::RpcDeadCallback, client, boost::asio::placeholders::error, methodId, dcb));
 		}
 
-		JME_RpcCallback::JME_RpcCallbackPtr JME_RpcCallback::create( RpcHandler cb )
+		RpcCallback::RpcCallbackPtr RpcCallback::create( RpcHandler cb )
 		{
-			return JME_RpcCallbackPtr(new JME_RpcCallback(cb));
+			return RpcCallbackPtr(new RpcCallback(cb));
 		}
 
-		JME_RpcCallback::JME_RpcCallbackPtr JME_RpcCallback::create( JME_RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId )
+		RpcCallback::RpcCallbackPtr RpcCallback::create( RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId )
 		{
-			return JME_RpcCallbackPtr(new JME_RpcCallback(client, cb, t, dcb, methodId));
+			return RpcCallbackPtr(new RpcCallback(client, cb, t, dcb, methodId));
 		}
 
-		JME_RpcClient::JME_RpcClient( const string& ip, const string& port, size_t buffSize, size_t reconnect ):
+		RpcClient::RpcClient( const string& ip, const string& port, size_t buffSize, size_t reconnect ):
 			_methodId(0)
 		{
-			auto session = JMEngine::net::JME_TcpSession::create(this, buffSize, reconnect);
+			auto session = JMEngine::net::TcpSession::create(this, buffSize, reconnect);
 			_session = session;
 			session->connect(ip, port);
 		}
 
-		JME_RpcClient::~JME_RpcClient()
+		RpcClient::~RpcClient()
 		{
 			if (!_session.expired())
 			{
@@ -52,45 +52,12 @@ namespace JMEngine
 			}
 		}
 
-		JMEngine::rpc::JME_RpcClient::JME_RpcClientPtr JME_RpcClient::create( const string& ip, const string& port, size_t buffSize, size_t reconnect )
+		JMEngine::rpc::RpcClient::JME_RpcClientPtr RpcClient::create( const string& ip, const string& port, size_t buffSize, size_t reconnect )
 		{
-			return JMEngine::rpc::JME_RpcClient::JME_RpcClientPtr(new JME_RpcClient(ip, port, reconnect, buffSize));
+			return JMEngine::rpc::RpcClient::JME_RpcClientPtr(new RpcClient(ip, port, reconnect, buffSize));
 		}
 
-		bool JME_RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb )
-		{
-			if(!_session.lock()->isOk())
-			{
-				LOGE("Remote server is not connected");
-				return false;
-			}
-
-			try
-			{
-				jme_rpc rpc;
-
-				{
-					boost::recursive_mutex::scoped_lock lock(_mutex);
-					rpc.set_rpc_id(++_methodId);
-					_cbs[_methodId] = JME_RpcCallback::create(cb);
-				}
-
-				rpc.set_method(method);
-				rpc.set_params(params->SerializeAsString());
-
-				auto m(boost::move(rpc.SerializeAsString()));
-				JME_Message msg(RPCMessage, m);	
-
-				return _session.lock()->writeMessage(msg);
-			}
-			catch(std::exception& e)
-			{
-				LOGE("Call rpc function failed, error ==> [ %s ]", e.what());
-			}
-			return false;
-		}
-
-		bool JME_RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb, size_t dt, JME_RpcCallback::RpcDeadHandler dcb )
+		bool RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, RpcCallback::RpcHandler cb )
 		{
 			if(!_session.lock()->isOk())
 			{
@@ -105,14 +72,14 @@ namespace JMEngine
 				{
 					boost::recursive_mutex::scoped_lock lock(_mutex);
 					rpc.set_rpc_id(++_methodId);
-					_cbs[_methodId] = JME_RpcCallback::create(shared_from_this(), cb, dt, dcb, _methodId);
+					_cbs[_methodId] = RpcCallback::create(cb);
 				}
 
 				rpc.set_method(method);
 				rpc.set_params(params->SerializeAsString());
 
 				auto m(boost::move(rpc.SerializeAsString()));
-				JME_Message msg(RPCMessage, m);	
+				Message msg(RPCMessage, m);	
 
 				return _session.lock()->writeMessage(msg);
 			}
@@ -123,7 +90,40 @@ namespace JMEngine
 			return false;
 		}
 
-		bool JME_RpcClient::callRpcMethod(const char* method, const google::protobuf::Message* params)
+		bool RpcClient::callRpcMethod( const char* method, const google::protobuf::Message* params, RpcCallback::RpcHandler cb, size_t dt, RpcCallback::RpcDeadHandler dcb )
+		{
+			if(!_session.lock()->isOk())
+			{
+				LOGE("Remote server is not connected");
+				return false;
+			}
+
+			try
+			{
+				jme_rpc rpc;
+
+				{
+					boost::recursive_mutex::scoped_lock lock(_mutex);
+					rpc.set_rpc_id(++_methodId);
+					_cbs[_methodId] = RpcCallback::create(shared_from_this(), cb, dt, dcb, _methodId);
+				}
+
+				rpc.set_method(method);
+				rpc.set_params(params->SerializeAsString());
+
+				auto m(boost::move(rpc.SerializeAsString()));
+				Message msg(RPCMessage, m);	
+
+				return _session.lock()->writeMessage(msg);
+			}
+			catch(std::exception& e)
+			{
+				LOGE("Call rpc function failed, error ==> [ %s ]", e.what());
+			}
+			return false;
+		}
+
+		bool RpcClient::callRpcMethod(const char* method, const google::protobuf::Message* params)
 		{
 			if(!_session.lock()->isOk())
 			{
@@ -142,7 +142,7 @@ namespace JMEngine
 				rpc.set_params(params->SerializeAsString());
 
 				auto m(boost::move(rpc.SerializeAsString()));
-				JME_Message msg(RPCMessage, m);	
+				Message msg(RPCMessage, m);	
 
 				return _session.lock()->writeMessage(msg);
 			}
@@ -153,30 +153,30 @@ namespace JMEngine
 			return false;
 		}
 
-		void JME_RpcClient::sessionConnectSucceed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session )
+		void RpcClient::sessionConnectSucceed( JMEngine::net::TcpSession::TcpSessionPtr session )
 		{
 			session->start(RPCSession);
 
 			LOGI("Connect to rpc server [ %s:%s ] succeed", session->getIp(), session->getPort());
 		}
 
-		void JME_RpcClient::sessionConnectFailed( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
+		void RpcClient::sessionConnectFailed( JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e )
 		{
 			LOGW("Connect to rpc server [ %s:%s ] failed, error ==> [ %d:%s ]", session->getIp(), session->getPort(), e.value(), e.message());
 		}
 
-		void JME_RpcClient::sessionDisconnect( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
+		void RpcClient::sessionDisconnect( JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e )
 		{
 			session->reconnect();
 		}
 
-		void JME_RpcClient::sessionReceiveMessage( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, JME_MessagePtr msg )
+		void RpcClient::sessionReceiveMessage( JMEngine::net::TcpSession::TcpSessionPtr session, MessagePtr msg )
 		{			
 			string m = msg->getMessageStr();
 			jme_rpc rpc;
 			rpc.ParseFromString(m);
 
-			JME_RpcCallback::JME_RpcCallbackPtr cb;
+			RpcCallback::RpcCallbackPtr cb;
 
 			{
 				boost::recursive_mutex::scoped_lock lock(_mutex);
@@ -196,13 +196,13 @@ namespace JMEngine
 			}
 		}
 
-		void JME_RpcClient::sessionReadError( JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e )
+		void RpcClient::sessionReadError( JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e )
 		{
 			session->resetReadBuffer();
 			session->reconnect();
 		}
 
-		void JME_RpcClient::removeDeadRPC( int methodId )
+		void RpcClient::removeDeadRPC( int methodId )
 		{
 			boost::recursive_mutex::scoped_lock lock(_mutex);
 
@@ -213,7 +213,7 @@ namespace JMEngine
 			}
 		}
 
-		void JME_RpcClient::RpcDeadCallback( JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, JME_RpcCallback::RpcDeadHandler dcb )
+		void RpcClient::RpcDeadCallback( JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, RpcCallback::RpcDeadHandler dcb )
 		{
 			if (err)
 				return;

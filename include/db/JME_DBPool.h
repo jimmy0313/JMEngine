@@ -24,14 +24,14 @@ namespace JMEngine
 {
 	namespace db
 	{
-		class JME_DBException
+		class DBException
 		{
 		public:
-			explicit JME_DBException(const string& err):
+			explicit DBException(const string& err):
 				_err(err)
 			{
 			}
-			explicit JME_DBException(const char* err):
+			explicit DBException(const char* err):
 				_err(err)
 			{
 			}
@@ -63,14 +63,14 @@ namespace JMEngine
 			{
 				_conn = _delegator->getConn();	// 获取连接
 				if (nullptr == _conn)
-					throw JME_DBException("Try to get db connector failed !!!");
+					throw DBException("Try to get db connector failed !!!");
 			}
 			explicit DBHelper(DBConnDelegator<T>* delegtor)
 			{
 				_delegator = (DBPool<T>*)delegtor;
 				_conn = _delegator->getConn();	// 获取连接
 				if (nullptr == _conn)
-					throw JME_DBException("Try to get db connector failed !!!");
+					throw DBException("Try to get db connector failed !!!");
 			}
 
 			~DBHelper()

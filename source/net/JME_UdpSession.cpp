@@ -6,7 +6,7 @@ namespace JMEngine
 	namespace net
 	{
 
-		JME_UdpSession::JME_UdpSession(JMEngine::net::JME_UdpNetHandler::JME_UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size):
+		UdpSession::UdpSession(JMEngine::net::UdpNetHandler::UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size):
 			_socket(JMECore.getNetIoService(), boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port)),
 			_handler(handler),
 			_port(port),
@@ -19,7 +19,7 @@ namespace JMEngine
 			_writeBufferSize = buffer_size;
 		}
 
-		JME_UdpSession::~JME_UdpSession()
+		UdpSession::~UdpSession()
 		{
 			nedalloc::nedfree(_writeBuffer);
 			try 
@@ -32,26 +32,26 @@ namespace JMEngine
 			}
 		}
 
-		JMEngine::net::JME_UdpSession::JME_UdpSessionPtr JME_UdpSession::create(JMEngine::net::JME_UdpNetHandler::JME_UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size)
+		JMEngine::net::UdpSession::JME_UdpSessionPtr UdpSession::create(JMEngine::net::UdpNetHandler::UdpNetHandlerPtr handler, unsigned short port, unsigned int buffer_size)
 		{
-			return JMEngine::net::JME_UdpSession::JME_UdpSessionPtr(new JME_UdpSession(handler, port, buffer_size));
+			return JMEngine::net::UdpSession::JME_UdpSessionPtr(new UdpSession(handler, port, buffer_size));
 		}
 
-		void JME_UdpSession::doRead()
+		void UdpSession::doRead()
 		{
 			if (_isReading)
 				return;
 		
 			boost::system::error_code ec;
-			_socket.async_receive_from(boost::asio::buffer(_buffer.getBuffer(),_buffer.getAvailableBufferSize()), _ep, boost::bind(&JME_UdpSession::onRead, this, _1, _2));
+			_socket.async_receive_from(boost::asio::buffer(_buffer.getBuffer(),_buffer.getAvailableBufferSize()), _ep, boost::bind(&UdpSession::onRead, this, _1, _2));
 		}
 
-		void JME_UdpSession::startRead()
+		void UdpSession::startRead()
 		{
-			JMECore.getNetIoService().post(boost::bind(&JME_UdpSession::doRead, this));
+			JMECore.getNetIoService().post(boost::bind(&UdpSession::doRead, this));
 		}
 
-		void JME_UdpSession::onRead(boost::system::error_code ec, std::size_t bytes_recvd)
+		void UdpSession::onRead(boost::system::error_code ec, std::size_t bytes_recvd)
 		{
 			_isReading = false;
 			if (ec || bytes_recvd <= 0)
@@ -62,17 +62,17 @@ namespace JMEngine
 			size_t l = 0;
 
 			int ret = _buffer.getMessage(&data_ptr,&l);
-			if (JME_ReadBuffer::ReadBufferError == ret || JME_ReadBuffer::ReadBufferNoMessage == ret)
+			if (ReadBuffer::ReadBufferError == ret || ReadBuffer::ReadBufferNoMessage == ret)
 			{
 				_buffer.reset();
 				return doRead();
 			}
 			// 正常响应包处理
 			JMECore.getLogicioService().post(
-				boost::bind(&JME_UdpNetHandler::onReceive, _handler, shared_from_this(), JME_Message::create(data_ptr, l)));
+				boost::bind(&UdpNetHandler::onReceive, _handler, shared_from_this(), Message::create(data_ptr, l)));
 		}
 
-		void JME_UdpSession::writeMessage(const JME_Message& msg)
+		void UdpSession::writeMessage(const Message& msg)
 		{
 			if (_isWriting)
 				return;
@@ -85,19 +85,19 @@ namespace JMEngine
 			doWrite();
 		}
 
-		void JME_UdpSession::doWrite()
+		void UdpSession::doWrite()
 		{
 			_socket.async_send_to(boost::asio::buffer(_writeBuffer, _writeBufferOffest), _ep, 
-				boost::bind(&JME_UdpSession::onWrite, this, _1, _2));
+				boost::bind(&UdpSession::onWrite, this, _1, _2));
 		}
 
-		void JME_UdpSession::onWrite(boost::system::error_code ec, std::size_t bytes_writed)
+		void UdpSession::onWrite(boost::system::error_code ec, std::size_t bytes_writed)
 		{
 			_isWriting = false;
 			_writeBufferOffest = 0;
 		
 			JMECore.getLogicioService().post(
-				boost::bind(&JME_UdpNetHandler::onWrite, _handler, shared_from_this()));
+				boost::bind(&UdpNetHandler::onWrite, _handler, shared_from_this()));
 		}
 
 	}

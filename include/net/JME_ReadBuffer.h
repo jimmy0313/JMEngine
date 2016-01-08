@@ -11,7 +11,7 @@ namespace JMEngine
 {
 	namespace net
 	{
-		class JME_ReadBuffer
+		class ReadBuffer
 		{
 		public:
 			enum
@@ -20,14 +20,14 @@ namespace JMEngine
 				ReadBufferNoMessage = 0,
 			};
 		public:
-			JME_ReadBuffer(size_t n)
+			ReadBuffer(size_t n)
 			{
 				_buffer = (char*)nedalloc::nedmalloc(n);
 				_buffSize = n;
 				_buffOffest = _buffer;
 				_handleOffest = _buffer;
 			}
-			~JME_ReadBuffer(void)
+			~ReadBuffer(void)
 			{
 				nedalloc::nedfree(_buffer);
 			}

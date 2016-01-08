@@ -8,9 +8,9 @@ namespace JMEngine
 	{
 		IoServiceCore::IoServiceCore( void )
 		{
-			_netThread = JME_Thread::create();
+			_netThread = Thread::create();
 
-			_logicThread = JME_Thread::create();
+			_logicThread = Thread::create();
 		}
 
 		IoServiceCore::~IoServiceCore( void )
@@ -51,29 +51,29 @@ namespace JMEngine
 			LOGT("Create main logic thread [ %s ]", _logicThread->getThreadId());
 		}
 
-		JME_Thread::JME_Thread()
+		Thread::Thread()
 		{
 			_ioService = ioServicePtr(new boost::asio::io_service);
 			_work = workPtr(new boost::asio::io_service::work(*_ioService));
 		}
 
-		JME_Thread::~JME_Thread()
+		Thread::~Thread()
 		{
 			stop();
 		}
 
-		JME_Thread::JME_ThreadPtr JME_Thread::create()
+		Thread::JME_ThreadPtr Thread::create()
 		{
-			return JME_ThreadPtr(new JME_Thread);
+			return JME_ThreadPtr(new Thread);
 		}
 
-		void JME_Thread::stop()
+		void Thread::stop()
 		{
 			_ioService->stop();
 			_thread->join();
 		}
 
-		void JME_Thread::run()
+		void Thread::run()
 		{
 			_thread = threadPtr(new boost::thread(boost::bind(&boost::asio::io_service::run, _ioService)));
 		}

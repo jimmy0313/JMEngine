@@ -25,8 +25,8 @@ namespace JMEngine
 {
 	namespace net
 	{
-		class JME_TcpSession :
-			public boost::enable_shared_from_this<JME_TcpSession>
+		class TcpSession :
+			public boost::enable_shared_from_this<TcpSession>
 		{
 			enum SessionStatus
 			{
@@ -41,17 +41,17 @@ namespace JMEngine
 				InGame = 1,
 			};
 		public:
-			typedef boost::shared_ptr<JME_TcpSession> JME_TcpSessionPtr;
-			typedef boost::weak_ptr<JME_TcpSession> JME_TcpSessionWeakPtr;
+			typedef boost::shared_ptr<TcpSession> TcpSessionPtr;
+			typedef boost::weak_ptr<TcpSession> TcpSessionWeakPtr;
 
-			JME_TcpSession();
-			JME_TcpSession(JME_NetHandler* net_handler, size_t n = MaxMsgLength, size_t reconnect = 5); // default buffer size
-			~JME_TcpSession();
+			TcpSession();
+			TcpSession(NetHandler* net_handler, size_t n = MaxMsgLength, size_t reconnect = 5); // default buffer size
+			~TcpSession();
 
-			static JME_TcpSessionPtr create(JME_NetHandler::JME_NetHandlerPtr net_handler, size_t n_buff_size, size_t reconnect = 0);
-			static JME_TcpSessionPtr create(JME_NetHandler* net_handler, size_t n_buff_size, size_t reconnect = 0);
+			static TcpSessionPtr create(NetHandler::NetHandlerPtr net_handler, size_t n_buff_size, size_t reconnect = 0);
+			static TcpSessionPtr create(NetHandler* net_handler, size_t n_buff_size, size_t reconnect = 0);
 
-			static void	destory(JME_TcpSession* p);	
+			static void	destory(TcpSession* p);	
 
 			inline int getNetId() { return _net_id; }
 			inline void setNetId(int id) { _net_id = id; }
@@ -81,14 +81,14 @@ namespace JMEngine
 
 			// write message 
 			void writeLock(const char* dataPtr, const int len);
-			bool writeMessage(const JME_Message& msg);
-			bool writeMessage(JME_Message::JME_MessagePtr msg);
+			bool writeMessage(const Message& msg);
+			bool writeMessage(Message::JME_MessagePtr msg);
 
 		private:
 			void onConnect();
 			void onReconnect(boost::shared_ptr<boost::asio::deadline_timer> t);
 
-			bool checkWriteBuffer(const JME_Message& msg);
+			bool checkWriteBuffer(const Message& msg);
 
 			void writeNolock(const char* dataPtr, const int len);
 			// internal read or write message
@@ -104,14 +104,14 @@ namespace JMEngine
 			tcp::socket _socket;
 			bool _asyncConnect;	//是否需要异步连接， 用于rpc client时， 一般设为false
 
-			JME_NetHandler* _netHandlerPtr;
+			NetHandler* _netHandlerPtr;
 			
 			boost::mutex _writeMutex;
 			boost::mutex _readMutex;
 			char* _writeBuffer;
 			size_t _writeBufferSize;
 			size_t _writeBufferOffest;
-			JME_ReadBuffer _buff;
+			ReadBuffer _buff;
 
 			int _net_id;
 				

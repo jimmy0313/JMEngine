@@ -14,22 +14,22 @@ namespace JMEngine
 {
 	namespace net
 	{
-		class JME_TcpAcceptor
+		class TcpAcceptor
 		{
 		public:
-			typedef boost::shared_ptr<JME_TcpAcceptor> JME_TcpAcceptorPtr;
+			typedef boost::shared_ptr<TcpAcceptor> JME_TcpAcceptorPtr;
 			typedef boost::shared_ptr<boost::asio::ip::tcp::acceptor> AcceptorPtr;
 		public:
-			JME_TcpAcceptor(JMEngine::net::JME_NetHandler::JME_NetHandlerPtr handler, unsigned short port);
-			~JME_TcpAcceptor();
+			TcpAcceptor(JMEngine::net::NetHandler::NetHandlerPtr handler, unsigned short port);
+			~TcpAcceptor();
 
-			static JMEngine::net::JME_TcpAcceptor::JME_TcpAcceptorPtr create(JMEngine::net::JME_NetHandler::JME_NetHandlerPtr handler, unsigned short port);
+			static JMEngine::net::TcpAcceptor::JME_TcpAcceptorPtr create(JMEngine::net::NetHandler::NetHandlerPtr handler, unsigned short port);
 
 			void accept(size_t reconnect, size_t bufferSize);
 		private:
-			void handlerAccept(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, size_t reconnect, size_t bufferSize, const boost::system::error_code& error);
+			void handlerAccept(JMEngine::net::TcpSession::TcpSessionPtr session, size_t reconnect, size_t bufferSize, const boost::system::error_code& error);
 		public:
-			JME_NetHandler::JME_NetHandlerPtr _acceptorHandler;
+			NetHandler::NetHandlerPtr _acceptorHandler;
 			unsigned short _port;
 
 			AcceptorPtr _acceptor;

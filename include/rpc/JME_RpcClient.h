@@ -25,23 +25,23 @@ namespace JMEngine
 {
 	namespace rpc
 	{
-		class JME_RpcClient;
-		typedef boost::shared_ptr<JME_RpcClient> JME_RpcClientPtr;
+		class RpcClient;
+		typedef boost::shared_ptr<RpcClient> RpcClientPtr;
 
-		class JME_RpcCallback
+		class RpcCallback
 		{
 		public:
 			typedef boost::function<void(const string& response)> RpcHandler;
 			typedef boost::function<void()> RpcDeadHandler;
 			typedef boost::shared_ptr<boost::asio::deadline_timer> DeadTimePtr;
-			typedef boost::shared_ptr<JME_RpcCallback> JME_RpcCallbackPtr;
+			typedef boost::shared_ptr<RpcCallback> RpcCallbackPtr;
 
 		public:
-			JME_RpcCallback(RpcHandler cb);
-			JME_RpcCallback(JME_RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId);
+			RpcCallback(RpcHandler cb);
+			RpcCallback(RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId);
 
-			static JME_RpcCallback::JME_RpcCallbackPtr create(RpcHandler cb);
-			static JME_RpcCallback::JME_RpcCallbackPtr create(JME_RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId);
+			static RpcCallback::RpcCallbackPtr create(RpcHandler cb);
+			static RpcCallback::RpcCallbackPtr create(RpcClientPtr client, RpcHandler cb, size_t t, RpcDeadHandler dcb, int methodId);
 
 		public:
 			RpcHandler _cb;	//回调函数
@@ -50,29 +50,29 @@ namespace JMEngine
 		};
 
 
-		class JME_RpcClient : 
-			public JMEngine::net::JME_NetHandler,
-			public boost::enable_shared_from_this<JME_RpcClient>
+		class RpcClient : 
+			public JMEngine::net::NetHandler,
+			public boost::enable_shared_from_this<RpcClient>
 		{
 		public:
-			typedef boost::shared_ptr<JME_RpcClient> JME_RpcClientPtr;
+			typedef boost::shared_ptr<RpcClient> JME_RpcClientPtr;
 
-			friend class JME_RpcCallback;
+			friend class RpcCallback;
 		public:
-			JME_RpcClient(const string& ip, const string& port, size_t buffSize, size_t reconnect);
-			~JME_RpcClient();
+			RpcClient(const string& ip, const string& port, size_t buffSize, size_t reconnect);
+			~RpcClient();
 
-			static JMEngine::rpc::JME_RpcClient::JME_RpcClientPtr create(const string& ip, const string& port, size_t buffSize, size_t reconnect);
+			static JMEngine::rpc::RpcClient::JME_RpcClientPtr create(const string& ip, const string& port, size_t buffSize, size_t reconnect);
 			
 			bool callRpcMethod(const char* method, const google::protobuf::Message* params);
-			bool callRpcMethod(const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb);	//返回值为真 表示参数
-			bool callRpcMethod(const char* method, const google::protobuf::Message* params, JME_RpcCallback::RpcHandler cb, size_t dt, JME_RpcCallback::RpcDeadHandler dcb);	//返回值为真 表示参数
+			bool callRpcMethod(const char* method, const google::protobuf::Message* params, RpcCallback::RpcHandler cb);	//返回值为真 表示参数
+			bool callRpcMethod(const char* method, const google::protobuf::Message* params, RpcCallback::RpcHandler cb, size_t dt, RpcCallback::RpcDeadHandler dcb);	//返回值为真 表示参数
 
-			void sessionConnectSucceed(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session);
-			void sessionConnectFailed(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
-			void sessionDisconnect(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
-			void sessionReceiveMessage(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, JMEngine::net::JME_MessagePtr msg);
-			void sessionReadError(JMEngine::net::JME_TcpSession::JME_TcpSessionPtr session, boost::system::error_code e);
+			void sessionConnectSucceed(JMEngine::net::TcpSession::TcpSessionPtr session);
+			void sessionConnectFailed(JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e);
+			void sessionDisconnect(JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e);
+			void sessionReceiveMessage(JMEngine::net::TcpSession::TcpSessionPtr session, JMEngine::net::MessagePtr msg);
+			void sessionReadError(JMEngine::net::TcpSession::TcpSessionPtr session, boost::system::error_code e);
 
 		public:
 			void start();
@@ -81,13 +81,13 @@ namespace JMEngine
 		protected:
 			void removeDeadRPC(int methodId);
 
-			static void RpcDeadCallback(JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, JME_RpcCallback::RpcDeadHandler dcb);
+			static void RpcDeadCallback(JME_RpcClientPtr client, const boost::system::error_code& err, int methodId, RpcCallback::RpcDeadHandler dcb);
 
 		private:
-			JMEngine::net::JME_TcpSession::JME_TcpSessionWeakPtr _session;
+			JMEngine::net::TcpSession::TcpSessionWeakPtr _session;
 
 			int _methodId;
-			map<int, JME_RpcCallback::JME_RpcCallbackPtr> _cbs;
+			map<int, RpcCallback::RpcCallbackPtr> _cbs;
 
 			boost::recursive_mutex _mutex;
 		};

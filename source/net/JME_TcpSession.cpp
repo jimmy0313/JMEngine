@@ -7,7 +7,7 @@ namespace JMEngine
 {
 	namespace net
 	{
-		void JME_TcpSession::start(int net_id)
+		void TcpSession::start(int net_id)
 		{
 			try
 			{
@@ -26,7 +26,7 @@ namespace JMEngine
 
 		// read message from socket 
 		// if message package is ready , begin to process it
-		void JME_TcpSession::handleRead(boost::system::error_code error,size_t bytes_transferred)
+		void TcpSession::handleRead(boost::system::error_code error,size_t bytes_transferred)
 		{
 			_reading = false;
 			if ( !error )
@@ -45,18 +45,18 @@ namespace JMEngine
 							size_t l = 0;
 
 							int c = _buff.getMessage(&data_ptr,&l);
-							if (JME_ReadBuffer::ReadBufferError == c)
+							if (ReadBuffer::ReadBufferError == c)
 							{
 								_status = Disconnected;
 
 								boost::system::error_code ec;
 
 								JMECore.getLogicioService().post(
-									boost::bind(&JME_NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
+									boost::bind(&NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
 
 								return;
 							}
-							else if (JME_ReadBuffer::ReadBufferNoMessage == c)
+							else if (ReadBuffer::ReadBufferNoMessage == c)
 							{
 								//没有新的完整消息包
 								break;
@@ -64,7 +64,7 @@ namespace JMEngine
 							// 正常响应包处理
 
 							JMECore.getLogicioService().post(
-								boost::bind(&JME_NetHandler::sessionReceiveMessage, _netHandlerPtr, shared_from_this(), JME_Message::create(data_ptr, l)));
+								boost::bind(&NetHandler::sessionReceiveMessage, _netHandlerPtr, shared_from_this(), Message::create(data_ptr, l)));
 						}
 					}
 				}
@@ -75,7 +75,7 @@ namespace JMEngine
 					LOGE("Try to read error ==> [ %d:%s ]", e.value(), e.message());
 
 					JMECore.getLogicioService().post(
-						boost::bind(&JME_NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
+						boost::bind(&NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
 				}
 			}
 
@@ -85,7 +85,7 @@ namespace JMEngine
 				if ( _readBlockTimes >= 10 )
 				{
 					JMECore.getLogicioService().post(
-						boost::bind(&JME_NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
+						boost::bind(&NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
 					_status = Disconnected;
 
 					return;
@@ -113,11 +113,11 @@ namespace JMEngine
 				_status = Disconnected;
 
 				JMECore.getLogicioService().post(
-					boost::bind(&JME_NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
+					boost::bind(&NetHandler::sessionReadError, _netHandlerPtr, shared_from_this(), error));
 			}
 		}
 
-		void JME_TcpSession::handleWrite(boost::system::error_code error)
+		void TcpSession::handleWrite(boost::system::error_code error)
 		{
 			_writing = false;
 			if (!error)
@@ -179,7 +179,7 @@ namespace JMEngine
 			}
 		}
 
-		bool JME_TcpSession::writeMessage( const JME_Message& msg )
+		bool TcpSession::writeMessage( const Message& msg )
 		{
 			if (!isOk())
 			{
@@ -213,12 +213,12 @@ namespace JMEngine
 			return false;
 		}
 
-		bool JME_TcpSession::writeMessage( JME_Message::JME_MessagePtr msg )
+		bool TcpSession::writeMessage( Message::JME_MessagePtr msg )
 		{
 			return writeMessage(*msg);
 		}
 
-		void JME_TcpSession::writeLock(const char* data_ptr,int len)
+		void TcpSession::writeLock(const char* data_ptr,int len)
 		{
 			if (!isOk())
 				return;
@@ -230,7 +230,7 @@ namespace JMEngine
 			writeImpl(data_ptr,len);
 		}
 
-		void JME_TcpSession::writeNolock(const char* data_ptr,int len)
+		void TcpSession::writeNolock(const char* data_ptr,int len)
 		{
 			if (!isOk())
 				return;
@@ -241,7 +241,7 @@ namespace JMEngine
 			writeImpl(data_ptr,len);
 		}
 
-		void JME_TcpSession::writeImpl( const char* data_ptr,int len )
+		void TcpSession::writeImpl( const char* data_ptr,int len )
 		{
 			int destSize = _writeBufferOffest + len;
 
@@ -265,7 +265,7 @@ namespace JMEngine
 			}
 		}
 
-		JME_TcpSession::JME_TcpSession():
+		TcpSession::TcpSession():
 			_socket(JMECore.getNetIoService()),
 			_buff(0),
 			_writeBufferSize(0),
@@ -283,7 +283,7 @@ namespace JMEngine
 
 		}
 
-		JME_TcpSession::JME_TcpSession( JME_NetHandler* net_handler, size_t n /*= MaxMsgLength*/, size_t reconnect/* = 5*/ ):
+		TcpSession::TcpSession( NetHandler* net_handler, size_t n /*= MaxMsgLength*/, size_t reconnect/* = 5*/ ):
 			_socket(JMECore.getNetIoService()),
 			_buff(n),
 			_netHandlerPtr(net_handler),
@@ -302,7 +302,7 @@ namespace JMEngine
 		}
 
 
-		JME_TcpSession::~JME_TcpSession()
+		TcpSession::~TcpSession()
 		{			
 			boost::mutex::scoped_lock lock(_writeMutex);
 			nedalloc::nedfree(_writeBuffer);
@@ -320,7 +320,7 @@ namespace JMEngine
 			_reading = false;
 		}
 
-		void JME_TcpSession::stop()
+		void TcpSession::stop()
 		{
 			try
 			{
@@ -345,25 +345,25 @@ namespace JMEngine
 			_reading = false;
 		}
 
-		JME_TcpSession::JME_TcpSessionPtr JME_TcpSession::create( JME_NetHandler::JME_NetHandlerPtr net_handler, size_t n_buff_size, size_t reconnect/* = 0*/ )
+		TcpSession::TcpSessionPtr TcpSession::create( NetHandler::NetHandlerPtr net_handler, size_t n_buff_size, size_t reconnect/* = 0*/ )
 		{
-			void* m = nedalloc::nedmalloc(sizeof(JME_TcpSession));
-			return JME_TcpSessionPtr(new(m) JME_TcpSession(net_handler.get(), n_buff_size, reconnect),destory);
+			void* m = nedalloc::nedmalloc(sizeof(TcpSession));
+			return TcpSessionPtr(new(m) TcpSession(net_handler.get(), n_buff_size, reconnect),destory);
 		}
 
-		JMEngine::net::JME_TcpSessionPtr JME_TcpSession::create( JME_NetHandler* net_handler, size_t n_buff_size, size_t reconnect /*= 0*/ )
+		JMEngine::net::TcpSessionPtr TcpSession::create( NetHandler* net_handler, size_t n_buff_size, size_t reconnect /*= 0*/ )
 		{
-			void* m = nedalloc::nedmalloc(sizeof(JME_TcpSession));
-			return JME_TcpSessionPtr(new(m) JME_TcpSession(net_handler, n_buff_size, reconnect),destory);
+			void* m = nedalloc::nedmalloc(sizeof(TcpSession));
+			return TcpSessionPtr(new(m) TcpSession(net_handler, n_buff_size, reconnect),destory);
 		}
 
-		void JME_TcpSession::destory(JME_TcpSession* p)
+		void TcpSession::destory(TcpSession* p)
 		{
-			p->~JME_TcpSession();
+			p->~TcpSession();
 			nedalloc::nedfree(p);
 		}
 
-		void JME_TcpSession::postReadNull()
+		void TcpSession::postReadNull()
 		{
 			if(!_socket.is_open() || _reading)
 				return;
@@ -371,13 +371,13 @@ namespace JMEngine
 			_reading = true;
 			_socket.async_read_some(
 				boost::asio::null_buffers(),
-				boost::bind(&JME_TcpSession::handleRead,
+				boost::bind(&TcpSession::handleRead,
 				shared_from_this(),
 				boost::asio::placeholders::error,
 				boost::asio::placeholders::bytes_transferred));
 		}
 
-		void JME_TcpSession::postWriteNull()
+		void TcpSession::postWriteNull()
 		{
 			if(!_socket.is_open() || _writing || _writeBufferOffest == 0)
 				return;
@@ -385,12 +385,12 @@ namespace JMEngine
 			_writing = true;
 			_socket.async_write_some(
 				boost::asio::null_buffers(),
-				boost::bind(&JME_TcpSession::handleWrite,
+				boost::bind(&TcpSession::handleWrite,
 				shared_from_this(),
 				boost::asio::placeholders::error));
 		}
 
-		void JME_TcpSession::connect( const string& ip, const string& port )
+		void TcpSession::connect( const string& ip, const string& port )
 		{
 			_ip = ip;
 			_port = port;
@@ -398,20 +398,20 @@ namespace JMEngine
 			onConnect();
 		}
 
-		void JME_TcpSession::handleConnect( const boost::system::error_code& e )
+		void TcpSession::handleConnect( const boost::system::error_code& e )
 		{
 			if(e)
 			{
 				_status = Disconnected;
 
 				JMECore.getLogicioService().post(
-					boost::bind(&JME_NetHandler::sessionConnectFailed, _netHandlerPtr, shared_from_this(), e));
+					boost::bind(&NetHandler::sessionConnectFailed, _netHandlerPtr, shared_from_this(), e));
 
 				if (_reconnectInterval)
 				{
 					boost::shared_ptr<deadline_timer> t(new boost::asio::deadline_timer(_socket.get_io_service()));
 					t->expires_from_now(boost::posix_time::seconds(_reconnectInterval));
-					t->async_wait(boost::bind(&JME_TcpSession::onReconnect, shared_from_this(), t));
+					t->async_wait(boost::bind(&TcpSession::onReconnect, shared_from_this(), t));
 				}
 			}
 			else
@@ -419,16 +419,16 @@ namespace JMEngine
 				_status = Connected;
 
 				JMECore.getLogicioService().post(
-					boost::bind(&JME_NetHandler::sessionConnectSucceed, _netHandlerPtr, shared_from_this()));
+					boost::bind(&NetHandler::sessionConnectSucceed, _netHandlerPtr, shared_from_this()));
 			}
 		}
 
-		void JME_TcpSession::reconnect()
+		void TcpSession::reconnect()
 		{
 			onConnect();
 		}
 
-		void JME_TcpSession::onConnect()
+		void TcpSession::onConnect()
 		{
 			if (Disconnected != _status)
 				return;
@@ -442,7 +442,7 @@ namespace JMEngine
 				tcp::resolver::iterator iterator = resolver.resolve(query);	
 
 				boost::asio::async_connect(_socket, iterator,
-					boost::bind(&JME_TcpSession::handleConnect, shared_from_this(), boost::asio::placeholders::error));
+					boost::bind(&TcpSession::handleConnect, shared_from_this(), boost::asio::placeholders::error));
 			}
 			else
 			{
@@ -456,22 +456,22 @@ namespace JMEngine
 			}
 		}
 
-		void JME_TcpSession::onReconnect( boost::shared_ptr<boost::asio::deadline_timer> t )
+		void TcpSession::onReconnect( boost::shared_ptr<boost::asio::deadline_timer> t )
 		{
 			onConnect();
 		}
 
-		bool JME_TcpSession::isOk()
+		bool TcpSession::isOk()
 		{
 			return _status == Connected;
 		}
 
-		boost::asio::ip::tcp::socket& JME_TcpSession::socket()
+		boost::asio::ip::tcp::socket& TcpSession::socket()
 		{
 			return _socket;
 		}
 
-		bool JME_TcpSession::checkWriteBuffer( const JME_Message& msg )
+		bool TcpSession::checkWriteBuffer( const Message& msg )
 		{
 			int destSize = _writeBufferOffest + msg._totalLen;
 
@@ -482,7 +482,7 @@ namespace JMEngine
 			return true;
 		}
 
-		void JME_TcpSession::resetReadBuffer()
+		void TcpSession::resetReadBuffer()
 		{
 			_buff.reset();
 		}
