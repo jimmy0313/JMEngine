@@ -68,6 +68,8 @@ namespace JMEngine
 
 			boost::asio::io_service& getNetIoService();
 			boost::asio::io_service& getLogicioService();
+			Thread::ThreadPtr getThreadByName(const char* name);
+			Thread::ThreadPtr createThreadByName(const char* name);
 
 			void start();
 			void stop();
@@ -75,6 +77,9 @@ namespace JMEngine
 		private:
 			Thread::ThreadPtr _netThread;
 			Thread::ThreadPtr _logicThread;
+			map<string, Thread::ThreadPtr> _namedThread;
+
+			Thread::ThreadPtr createNamedThread(const char* name);
 		};
 
 /*#if _MSC_VER >= 1800*/

@@ -15,8 +15,7 @@ namespace JMEngine
 
 		IoServiceCore::~IoServiceCore( void )
 		{
-			_netThread->stop();
-			_logicThread->stop();
+			stop();
 		}
 
 		boost::asio::io_service& IoServiceCore::getNetIoService()
@@ -33,6 +32,11 @@ namespace JMEngine
 		{
 			_netThread->stop();
 			_logicThread->stop();
+
+			for (auto& it : _namedThread)
+			{
+				it.second->stop();
+			}
 		}
 
 		IoServiceCore* IoServiceCore::getInstance()
@@ -49,6 +53,33 @@ namespace JMEngine
 
 			_logicThread->run();
 			LOGT("Create main logic thread [ %s ]", _logicThread->getThreadId());
+		}
+
+		Thread::ThreadPtr IoServiceCore::getThreadByName(const char* name)
+		{
+			auto it = _namedThread.find(name);
+			if (it == _namedThread.end())
+				return Thread::ThreadPtr();
+			return it->second;
+		}
+
+		Thread::ThreadPtr IoServiceCore::createThreadByName(const char* name)
+		{
+			auto thread = getThreadByName(name);
+			if (thread)
+				return thread;
+			return createNamedThread(name);
+		}
+
+		Thread::ThreadPtr IoServiceCore::createNamedThread(const char* name)
+		{
+			auto thread = Thread::create();
+			thread->run();
+
+			LOGT("Create named thread [ %s -- %s ]", name, thread->getThreadId());
+
+			_namedThread.insert(make_pair(name, thread));
+			return thread;
 		}
 
 		Thread::Thread()
