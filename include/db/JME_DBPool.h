@@ -61,6 +61,9 @@ namespace JMEngine
 			explicit DBHelper(DelegtorPtr delegtor):
 				_delegator((DBPool<T>*)delegtor.get())
 			{
+				if (nullptr == _delegator)
+					throw DBException("db pool is nullptr");
+
 				_conn = _delegator->getConn();	// 获取连接
 				if (nullptr == _conn)
 					throw DBException("Try to get db connector failed !!!");
@@ -68,6 +71,9 @@ namespace JMEngine
 			explicit DBHelper(DBConnDelegator<T>* delegtor)
 			{
 				_delegator = (DBPool<T>*)delegtor;
+				if (nullptr == _delegator)
+					throw DBException("db pool is nullptr");
+
 				_conn = _delegator->getConn();	// 获取连接
 				if (nullptr == _conn)
 					throw DBException("Try to get db connector failed !!!");
@@ -75,9 +81,12 @@ namespace JMEngine
 
 			~DBHelper()
 			{
-				if(nullptr != _conn)	// 释放连接
-					_delegator->releaseConn(_conn);
-				_delegator = nullptr;
+				if (nullptr != _delegator)
+				{
+					if(nullptr != _conn)	// 释放连接
+						_delegator->releaseConn(_conn);
+					_delegator = nullptr;
+				}
 			}
 
 			T* operator ->() { return _conn; }
