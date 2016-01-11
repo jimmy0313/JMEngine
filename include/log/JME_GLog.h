@@ -45,22 +45,24 @@ namespace JMEngine
 	{		
 		class GLog
 		{
-		public:
+		private:
 			GLog();
-			~GLog();
+			GLog(const GLog&){}
+			GLog& operator = (const GLog&){}
 
-			static std::string getGLogLevelName(GLogLevel enumValue);
-			static std::string getGLogLevelShortName(GLogLevel enumValue);
-			static GLogLevel getGLogLevelByValue(int enumValue);
+		public:
+			virtual ~GLog();
 
 			static GLog& getInstance();//获取日志单例对象引用
+
+			static string getGLogLevelName(GLogLevel level);
+			static GLogLevel getGLogLevelByValue(int val);
 
 			void setLogLevel(GLogLevel level);
 			GLogLevel getLogLevel();
 
-			void readConfig(std::string cfg="./config/log_cfg.json");//读取配置
+			void readConfig(string cfg="./config/log.json");//读取配置
 			void printConfig();//打印配置
-			void setLogName(const char * logName) { serverName = logName;}
 
 			//设置颜色
 			void setColor(GLogColor color);
@@ -83,22 +85,23 @@ namespace JMEngine
 
 			void run(boost::shared_ptr<boost::asio::deadline_timer> dt);
 		private:
-			static string serverName;
-			static string logPathName;
-			static string lastLogFullFileName;
-			static ofstream logOfstream;
-			static tm lastDateTime;
-			static GLogLevel fileLogLevel;//全局日志级别
-			static GLogLevel screenLogLevel;//屏幕日志打印级别
-			static int fileIdx;	//用于按大小进行文件分割
-			static size_t fileSize;	//分割标准
+			string _name;
+			string _log_path;
+			string _last_log_file;
+			ofstream _log_stream;
+			tm _last_time;				
+			GLogLevel _file_level;			//写入文件日志级别
+			GLogLevel _screen_level;		//屏幕打印日志级别
+			int _split_index;				//用于按大小进行文件分割
+			size_t _split_size;				//分割标准
+			unsigned int _write_interval;	//写入文件间隔
 
 			// for supporting multiple threads
 			boost::mutex _log_mutex;
 
-			void readClassLogLevelConfig(std::string cfg);
+			void readClassLogLevelConfig(const string& cfg);
 
-			void openOrCreateFile(string fileName);
+			void openOrCreateFile(const string& file);
 
 			bool checkAndUpdateLastCreateFileDate();
 
@@ -109,12 +112,12 @@ namespace JMEngine
 			bool checkToFileLogLevel(GLogLevel level);
 			bool checkToScreenLogLevel(GLogLevel level);
 
-			list<string>* _waitLogList;
-			list<string>* _writeLogList;
+			list<string>* _waiting_list;
+			list<string>* _writing_list;
 
-			boost::shared_ptr<boost::asio::io_service> _logIoService;
-			boost::shared_ptr<boost::asio::io_service::work> _logWorker;
-			boost::shared_ptr<boost::thread> _logThread;
+			boost::shared_ptr<boost::asio::io_service> _log_ioservice;
+			boost::shared_ptr<boost::asio::io_service::work> _log_worker;
+			boost::shared_ptr<boost::thread> _log_thread;
 		};
 
 		template<class T1>
@@ -130,7 +133,11 @@ namespace JMEngine
 
 				boost::format fmt("[%s] [%s:%d:%s:%s] [%s] %s\n");
 
-				auto ntm = boost::posix_time::to_simple_string(boost::posix_time::second_clock::local_time());
+				auto p = boost::posix_time::second_clock::local_time();
+				struct tm now = boost::posix_time::to_tm(p);
+
+				boost::format fmt_time("%d-%02d-%02d %d:%d:%d");
+				auto ntm =  (fmt_time % (now.tm_year + 1900) % (now.tm_mon + 1) % now.tm_mday % now.tm_hour % now.tm_min % now.tm_sec).str();
 				auto thread = boost::lexical_cast<string>(boost::this_thread::get_id());
 
 				auto logStr = boost::str(fmt % ntm % file % line % function % thread % getGLogLevelName(level) % t1);
@@ -147,7 +154,7 @@ namespace JMEngine
 				if (isOutFile)
 				{
 					_log_mutex.lock();
-					_waitLogList->emplace_back(logStr);
+					_waiting_list->emplace_back(logStr);
 					_log_mutex.unlock();
 				}
 			}

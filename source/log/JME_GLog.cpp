@@ -24,42 +24,27 @@ namespace JMEngine
 {
 	namespace log
 	{
-		static GLog* m_pInstance = NULL;
-		string GLog::serverName="log";
-		string GLog::logPathName="./log/";
-		string GLog::lastLogFullFileName="";
-		ofstream GLog::logOfstream;
-		tm GLog::lastDateTime;
-		GLogLevel GLog::fileLogLevel=GLog_TRACE;
-		GLogLevel GLog::screenLogLevel=GLog_TRACE;
-		int GLog::fileIdx=1;
-		size_t GLog::fileSize=0;
-
+		const static int MinWriteLogInterval = 15;
 		GLog& GLog::getInstance()
 		{
-			if ( m_pInstance == NULL )
-			{
-				m_pInstance = new GLog();
-				m_pInstance->setColor(White);
-			}
-
-			return *m_pInstance;
+			static auto pInstance = new GLog;
+			return *pInstance;
 		}
 	
-		void GLog::readClassLogLevelConfig(std::string cfg) //读取单个类日志级别配置
+		void GLog::readClassLogLevelConfig(const string& cfg) //读取单个类日志级别配置
 		{
-			const std::string file_name = cfg;
-			Json::Value logConfig_Value = JMEngine::file::load_jsonfile_val(file_name);
+			auto conf = JMEngine::file::load_jsonfile_val(cfg);
 
-			fileLogLevel=getGLogLevelByValue(logConfig_Value["fileLogLevel"].asInt());
-			screenLogLevel=getGLogLevelByValue(logConfig_Value["screenLogLevel"].asInt());
-			serverName=logConfig_Value["serverName"].asString();
-			logPathName=logConfig_Value["logPathName"].asString();
-			fileSize=logConfig_Value["splitSize"].asUInt() * 1024;
+			_file_level = getGLogLevelByValue(conf["file_level"].asInt());
+			_screen_level = getGLogLevelByValue(conf["screen_level"].asInt());
+			_name = conf["name"].asString();
+			_log_path = conf["log_path"].asString();
+			_split_size = conf["split_size"].asUInt() * 1024;
 
-			if(boost::filesystem::is_directory(logPathName)==false)
+			_write_interval = std::max(conf["write_interval"].asInt(), MinWriteLogInterval);
+			if(!boost::filesystem::is_directory(_log_path))
 			{
-				boost::filesystem::create_directory(logPathName);
+				boost::filesystem::create_directory(_log_path);
 			}
 		}
 		
@@ -72,18 +57,19 @@ namespace JMEngine
 
 		void GLog::printConfig()
 		{
-			cout << "Type level : ALL=1,TRACE=2,DEBUG=3,INFO=4,WARN=5,ERROR=6,FATAL=7,OFF=8" << endl;
-			cout << "----------------------------------------------------" << endl;
-			cout << "Log file level:   " << getGLogLevelName(fileLogLevel) <<endl;
-			cout << "Log screen level: " << getGLogLevelName(screenLogLevel) <<endl;
-			cout << "Log name:         " << serverName <<endl;
-			cout << "Log file dir:	   " << logPathName <<endl;
-			cout << "====================================================" << endl;
+			cout << "==========================================================================" << endl;
+			cout << "| Type level : ALL=1,TRACE=2,DEBUG=3,INFO=4,WARN=5,ERROR=6,FATAL=7,OFF=8 |" << endl;
+			cout << "--------------------------------------------------------------------------" << endl;
+			cout << "| Log file level:   " << getGLogLevelName(_file_level) <<endl;
+			cout << "| Log screen level: " << getGLogLevelName(_screen_level) <<endl;
+			cout << "| Log name:         " << _name <<endl;
+			cout << "| Log file dir:	 " << _log_path <<endl;
+			cout << "==========================================================================" << endl;
 		}
 
-		string GLog::getGLogLevelName( GLogLevel enumValue )
+		string GLog::getGLogLevelName( GLogLevel level )
 		{
-			switch (enumValue)
+			switch (level)
 			{
 			case GLog_ALL:
 				return "ALL";
@@ -104,32 +90,10 @@ namespace JMEngine
 			}
 			return "";
 		}
-		string GLog::getGLogLevelShortName( GLogLevel enumValue )
+
+		GLogLevel GLog::getGLogLevelByValue(int val)
 		{
-			switch (enumValue)
-			{
-			case GLog_ALL:
-				return "ALL";
-			case GLog_TRACE:
-				return "T";
-			case GLog_DEBUG:
-				return "D";
-			case GLog_INFO:
-				return "I";
-			case GLog_WARN:
-				return "W";
-			case GLog_ERROR:
-				return "E";
-			case GLog_FATAL:
-				return "F";
-			case GLog_OFF:
-				return "OFF";
-			}
-			return "";
-		}
-		GLogLevel GLog::getGLogLevelByValue(int enumValue)
-		{
-			switch (enumValue)
+			switch (val)
 			{
 			case 1:
 				return GLog_ALL;
@@ -152,37 +116,37 @@ namespace JMEngine
 			return GLog_ALL;
 		}
 
-		void GLog::openOrCreateFile( string fileName )
+		void GLog::openOrCreateFile( const string& file )
 		{
-			if (fileName.compare(lastLogFullFileName))
+			if (file.compare(_last_log_file))
 			{
-				if (logOfstream.is_open())
+				if (_log_stream.is_open())
 				{
-					logOfstream.close();
+					_log_stream.close();
 				}
-				lastLogFullFileName = fileName;
+				_last_log_file = file;
 			}
-			if (!logOfstream.is_open())
+			if (!_log_stream.is_open())
 			{
-				logOfstream.open(lastLogFullFileName.c_str(),ios_base::app);
+				_log_stream.open(_last_log_file.c_str(),ios_base::app);
 			}
 		}
 
 		bool GLog::checkAndUpdateLastCreateFileDate()
 		{
-			if(boost::filesystem::is_directory(logPathName)==false)
-				boost::filesystem::create_directory(logPathName);
+			if(boost::filesystem::is_directory(_log_path)==false)
+				boost::filesystem::create_directory(_log_path);
 
 			boost::posix_time::ptime p = second_clock::local_time();
-			struct tm now=boost::posix_time::to_tm(p);
+			struct tm now = boost::posix_time::to_tm(p);
 			
-			if (now.tm_year != this->lastDateTime.tm_year
-				|| now.tm_mon != this->lastDateTime.tm_mon
-				|| now.tm_mday != this->lastDateTime.tm_mday
+			if (now.tm_year != this->_last_time.tm_year
+				|| now.tm_mon != this->_last_time.tm_mon
+				|| now.tm_mday != this->_last_time.tm_mday
 				)
 			{
-				lastDateTime = now;
-				fileIdx = 1;
+				_last_time = now;
+				_split_index = 1;
 				return true;
 			}
 			else
@@ -195,17 +159,17 @@ namespace JMEngine
 		string GLog::getCurrentDateTime()
 		{
 			boost::format fmt("%d%02d%02d");
-			return (fmt % (lastDateTime.tm_year + 1900) % (lastDateTime.tm_mon + 1) % lastDateTime.tm_mday).str();
+			return (fmt % (_last_time.tm_year + 1900) % (_last_time.tm_mon + 1) % _last_time.tm_mday).str();
 		}
 
 		bool GLog::checkToFileLogLevel(GLogLevel level)
 		{
-			return fileLogLevel <= level;//日志级别小于全局
+			return _file_level <= level;//日志级别小于全局
 		}
 
 		bool GLog::checkToScreenLogLevel(GLogLevel level)
 		{
-			return screenLogLevel <= level;
+			return _screen_level <= level;
 		}
 		
 		void GLog::setColor(GLogColor color)
@@ -219,17 +183,25 @@ namespace JMEngine
 
 		}
 
-		GLog::GLog()
+		GLog::GLog():
+			_name(""),
+			_log_path("./log/"),
+			_last_log_file(""),
+			_file_level(GLog_TRACE),
+			_screen_level(GLog_TRACE),
+			_split_index(1),
+			_split_size(0),
+			_write_interval(MinWriteLogInterval)
 		{
-			_waitLogList = new list<string>;
-			_writeLogList = new list<string>;
+			_waiting_list = new list<string>;
+			_writing_list = new list<string>;
 
-			_logIoService = boost::make_shared<boost::asio::io_service>();
-			_logWorker = boost::make_shared<boost::asio::io_service::work>(*_logIoService);
-			_logThread = boost::make_shared<boost::thread>(boost::bind(&boost::asio::io_service::run, _logIoService));
+			_log_ioservice = boost::make_shared<boost::asio::io_service>();
+			_log_worker = boost::make_shared<boost::asio::io_service::work>(*_log_ioservice);
+			_log_thread = boost::make_shared<boost::thread>(boost::bind(&boost::asio::io_service::run, _log_ioservice));
 
-			auto dt = boost::make_shared<boost::asio::deadline_timer>(*_logIoService);
-			dt->expires_from_now(boost::posix_time::seconds(15));
+			auto dt = boost::make_shared<boost::asio::deadline_timer>(*_log_ioservice);
+			dt->expires_from_now(boost::posix_time::seconds(_write_interval));
 			dt->async_wait(boost::bind(&GLog::run, this, dt));
 		}
 
@@ -237,41 +209,47 @@ namespace JMEngine
 		{
 			printf("\033[0m");
 
-			_logIoService->stop();
-			_logThread->join();
+			_log_ioservice->stop();
+			_log_thread->join();
 
-			delete _waitLogList;
-			delete _writeLogList;
+			delete _waiting_list;
+			delete _writing_list;
 		}
 
 		void GLog::setLogLevel( GLogLevel level )
 		{
-			screenLogLevel = level;
+			_screen_level = level;
 		}
 
 		JMEngine::log::GLogLevel GLog::getLogLevel()
 		{
-			return screenLogLevel;
+			return _screen_level;
 		}
 
 		void GLog::checkLogFile()
 		{
 			checkAndUpdateLastCreateFileDate();
+
+			if (_split_size <= 0)
+			{
+				boost::format fmt("%s%s.%s.log");
+				string log_name = (fmt % this->_log_path % this->_name % getCurrentDateTime()).str();
+				return openOrCreateFile(log_name);
+			}
+
 			boost::format fmt("%s%s.%s.log.%d");
-
-			string tempName = (fmt % this->logPathName % this->serverName % getCurrentDateTime() % fileIdx).str();
-
+			string log_name = (fmt % this->_log_path % this->_name % getCurrentDateTime() % _split_index).str();
 			while (1)
 			{
 				struct stat fno;
-				int result = stat(tempName.c_str(), &fno);
-				if (0 == result && fno.st_size >= fileSize && fileSize != 0)
+				int result = stat(log_name.c_str(), &fno);
+				if (0 == result && fno.st_size >= _split_size && _split_size != 0)
 				{
-					tempName = (fmt % this->logPathName % this->serverName % getCurrentDateTime() % ++fileIdx).str();
+					log_name = (fmt % this->_log_path % this->_name % getCurrentDateTime() % ++_split_index).str();
 				}
 				else
 				{
-					return openOrCreateFile(tempName);
+					return openOrCreateFile(log_name);
 				}
 			}
 		}
@@ -282,27 +260,27 @@ namespace JMEngine
 			{
 				//如果没有等待写入文件的日志
 				boost::mutex::scoped_lock l(_log_mutex);
-				if (_waitLogList->empty())
+				if (_waiting_list->empty())
 				{
-					dt->expires_from_now(boost::posix_time::seconds(15));
+					dt->expires_from_now(boost::posix_time::seconds(_write_interval));
 					dt->async_wait(boost::bind(&GLog::run, this, dt));
 					return;
 				}
-				list<string>* list = _writeLogList;
-				_writeLogList = _waitLogList;
-				_waitLogList = list;
+				list<string>* list = _writing_list;
+				_writing_list = _waiting_list;
+				_waiting_list = list;
 			}
 
 			checkLogFile();
-			for (auto& log : *_writeLogList)
+			for (auto& log : *_writing_list)
 			{
-				logOfstream << log;
+				_log_stream << log;
 			}
-			logOfstream.flush();
+			_log_stream.flush();
 
-			_writeLogList->clear();
+			_writing_list->clear();
 
-			dt->expires_from_now(boost::posix_time::seconds(15));
+			dt->expires_from_now(boost::posix_time::seconds(_write_interval));
 			dt->async_wait(boost::bind(&GLog::run, this, dt));
 		}
 
